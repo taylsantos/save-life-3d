@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOS HERO - 3D Simulation Edition</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        :root {
+            --primary: #00e676;
+            --danger: #ff1744;
+            --bg: #0f172a;
+        }
+        body {
+            margin: 0; padding: 0; background-color: var(--bg);
+            font-family: 'Segoe UI', system-ui, sans-serif; color: #fff;
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; min-height: 100vh; overflow: hidden;
+        }
+        #app-container {
+            width: 90%; max-width: 400px; height: 90vh;
+            background: rgba(30, 41, 59, 0.7); border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5); backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1); display: flex;
+            flex-direction: column; padding: 20px; box-sizing: border-box;
+        }
+        .screen { display: none; flex-direction: column; height: 100%; }
+        .active { display: flex; }
+        h1 { font-size: 24px; text-align: center; margin: 10px 0; letter-spacing: 1px; }
+        p { font-size: 14px; text-align: center; opacity: 0.8; margin-bottom: 20px; }
+        button {
+            background: #2563eb; color: white; border: none; padding: 14px;
+            font-size: 14px; font-weight: bold; border-radius: 12px; margin: 8px 0;
+            cursor: pointer; transition: all 0.2s ease;
+        }
+        button:active { transform: scale(0.98); }
+        .btn-success { background: var(--primary); }
+        .btn-back { background: rgba(255,255,255,0.1); margin-top: auto; }
+        
+        /* O palco onde o 3D vai renderizar */
+        .viewport-3d {
+            width: 100%; height: 220px; background: #020617;
+            border-radius: 16px; overflow: hidden; position: relative;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.6);
+        }
+        #feedback {
+            font-size: 18px; font-weight: bold; text-align: center;
+            height: 25px; margin: 10px 0; color: #f59e0b;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app-container">
+
+    <div id="scr-menu" class="screen active">
+        <h1 style="color: var(--primary);">🚑 SOS HERO 3D</h1>
+        <p>Nova Geração de Simulação de Emergência</p>
+        <button onclick="openGame('rcp')">❤️ JOGAR: RCP 3D</button>
+        <button onclick="openGame('heimlich')" style="background: #e11d48;">🥖 JOGAR: HEIMLICH 3D</button>
+    </div>
+
+    <div id="scr-rcp" class="screen">
+        <h1>❤️ RITMO RCP</h1>
+        <p>Clique no peito do boneco no ritmo de Stayin' Alive!</p>
+        <div id="view-rcp" class="viewport-3d"></div>
+        <div id="feedback">Clique para começar</div>
+        <button id="rcp-score" class="btn-success" disabled>Score: 0 / 15</button>
+        <button class="btn-back" onclick="backToMenu()">↩ Voltar ao Menu</button>
+    </div>
+
+    <div id="scr-heimlich" class="screen">
+        <h1>🥖 MANOBRA HEIMLICH</h1>
+        <p>Clique no estômago para expelir o objeto engasgado!</p>
+        <div id="view-heimlich" class="viewport-3d"></div>
+        <button onclick="triggerHeimlichThrust()" style="background: #f59e0b;">🔺 COMPRIMIR ABDÔMEN</button>
+        <button class="btn-back" onclick="backToMenu()">↩ Voltar ao Menu</button>
+    </div>
+
+</div>
+
+<script>
+    // Gerenciamento de Telas
+    function openGame(game) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        if(game === 'rcp') {
+            document.getElementById('scr-rcp').classList.add('active');
+            initRcpGame();
+        } else if(game === 'heimlich') {
+            document.getElementById('scr-heimlich').classList.add('active');
+            initHeimlichGame();
+        }
+    }
+
+    function backToMenu() {
+        clean3D();
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById('scr-menu').classList.add('active');
+    }
+
+    // Variáveis Globais de Engine Gráfica
+    let scene, camera, renderer, animationFrameId;
+    let rcpBoneco, heimlichBoneco, engasgoObjeto;
+    let clicks = 0, lastClickTime = 0;
+
+    function clean3D() {
+        cancelAnimationFrame(animationFrameId);
+        if (renderer) {
+            renderer.dispose();
+            renderer = null;
+        }
+        clicks = 0;
+        lastClickTime = 0;
+    }
+
+    // ==========================================
+    // 1. MINI-JOGO: RITMO RCP 3D
+    // ==========================================
+    function initRcpGame() {
+        clean3D();
+        const container = document.getElementById('view-rcp');
+        container.innerHTML = "";
+
+        // Criando o Universo
+        scene = new THREE.Scene();
+        camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
+        camera.position.set(0, 3, 4);
+        camera.lookAt(0, 0.3, 0);
+
+        renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        container.appendChild(renderer.domElement);
+
+        // Montando o Boneco Simulador 3D usando Grupos
+        rcpBoneco = new THREE.Group();
+
+        // Tórax (Caixa)
+        const toraxGeo = new THREE.BoxGeometry(1.6, 0.6, 1.0);
+        const toraxMat = new THREE.MeshStandardMaterial({ color: 0x3b82f6, roughness: 0.3 });
+        const toraxMesh = new THREE.Mesh(toraxGeo, toraxMat);
+        rcpBoneco.add(toraxMesh);
+
+        // Cabeça (Esfera)
+        const cabecaGeo = new THREE.SphereGeometry(0.35, 32, 32);
+        const cabecaMat = new THREE.MeshStandardMaterial({ color: 0xfde047 });
+        const cabecaMesh = new THREE.Mesh(cabecaGeo, cabecaMat);
+        cabecaMesh.position.set(-1.1, 0.3, 0);
+        rcpBoneco.add(cabecaMesh);
+
+        scene.add(rcpBoneco);
+
+        // Luzes do Universo
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        scene.add(ambientLight);
+
+        const dirLight = new THREE.DirectionalLight(0xffffff, 1.0);
+        dirLight.position.set(2, 5, 3);
+        scene.add(dirLight);
+
+        // Captura o clique na tela 3D
+        renderer.domElement.onclick = processRcpClick;
+
+        // Loop de Renderização
+        function animate() {
+            animationFrameId = requestAnimationFrame(animate);
+            // Faz o peito voltar ao normal devagar após afundar
+            if (toraxMesh.scale.y < 1.0) {
+                toraxMesh.scale.y += 0.08;
+                toraxMesh.position.y += 0.024;
+            }
+            renderer.render(scene, camera);
+        }
+        animate();
+    }
+
+    function processRcpClick() {
+        const now = Date.now();
+        const torax = rcpBoneco.children[0];
+        
+        // Afunda o modelo 3D
+        torax.scale.y = 0.5;
+        torax.position.y = -0.15;
+
+        if (lastClickTime !== 0) {
+            const bpm = 60 / ((now - lastClickTime) / 1000);
+            // Ritmo Stayin Alive aceita uma janela de batimentos por minuto
+            if (bpm >= 95 && bpm <= 125) {
+                clicks++;
+                document.getElementById('feedback').innerHTML = "🟢 PERFEITO! NO RITMO!";
+                document.getElementById('feedback').style.color = "#00e676";
+            } else {
+                document.getElementById('feedback').innerHTML = "⚠️ FORA DE RITMO!";
+                document.getElementById('feedback').style.color = "#ff1744";
+            }
+        } else {
+            document.getElementById('feedback').innerHTML = "Mantenha o ritmo...";
+        }
+
+        lastClickTime = now;
+        document.getElementById('rcp-score').innerHTML = `Score: ${clicks} / 15`;
+
+        if(clicks >= 15) {
+            alert("🏅 Sucesso! Ritmo cardíaco estabilizado no simulador 3D!");
+            backToMenu();
+        }
+    }
+
+    // ==========================================
+    // 2. MINI-JOGO: HEIMLICH 3D
+    // ==========================================
+    function initHeimlichGame() {
+        clean3D();
+        const container = document.getElementById('view-heimlich');
+        container.innerHTML = "";
+
+        scene = new THREE.Scene();
+        camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
+        camera.position.set(0, 2, 4);
+        camera.lookAt(0, 0, 0);
+
+        renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        container.appendChild(renderer.domElement);
+
+        heimlichBoneco = new THREE.Group();
+
+        // Corpo (Cilindro deitado)
+        const corpoGeo = new THREE.CilinderGeometry ? new THREE.CylinderGeometry(0.4, 0.4, 1.8, 16) : new THREE.CylinderGeometry(0.4, 0.4, 1.8, 16);
+        const corpoMat = new THREE.MeshStandardMaterial({ color: 0xe11d48 });
+        const corpoMesh = new THREE.Mesh(corpoGeo, corpoMat);
+        corpoMesh.rotation.z = Math.PI / 2; // Deita o boneco
+        heimlichBoneco.add(corpoMesh);
+
+        // Pedaço de Carne Preso (Pequena esfera vermelha)
+        const carneGeo = new THREE.SphereGeometry(0.12, 16, 16);
+        const carneMat = new THREE.MeshStandardMaterial({ color: 0x991b1b });
+        engasgoObjeto = new THREE.Mesh(carneGeo, carneMat);
+        // Coloca a comida posicionada na "boca" (extremidade esquerda)
+        engasgoObjeto.position.set(-1.0, 0.2, 0); 
+        scene.add(engasgoObjeto);
+
+        scene.add(heimlichBoneco);
+
+        // Luzes
+        scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+        const light = new THREE.DirectionalLight(0xffffff, 1.0);
+        light.position.set(0, 4, 4);
+        scene.add(light);
+
+        function animateHeimlich() {
+            animationFrameId = requestAnimationFrame(animateHeimlich);
+            
+            // Se a comida foi expelida, faz ela voar para fora da tela no eixo X
+            if(clicks > 0 && engasgoObjeto.position.x > -4) {
+                engasgoObjeto.position.x -= 0.15; // Voa para a esquerda
+                engasgoObjeto.position.y += 0.05;  // E sobe fazendo parábola
+            }
+
+            renderer.render(scene, camera);
+        }
+        animateHeimlich();
+    }
+
+    function triggerHeimlichThrust() {
+        clicks = 1; // Dispara a animação no loop
+        // Faz o corpo do boneco contrair brevemente no impacto
+        heimlichBoneco.scale.set(0.9, 1.1, 0.9);
+        setTimeout(() => heimlichBoneco.scale.set(1, 1, 1), 100);
+        
+        setTimeout(() => {
+            alert("🥖 Objeto desobstruído com sucesso em 3D!");
+            backToMenu();
+        }, 1200);
+    }
+</script>
+
+</body>
+</html>
