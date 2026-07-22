@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SOS HERO - Academia do Socorrista</title>
+<title>SOS HERO - Academia do Socorrista Pro</title>
 
 <style>
 :root {
@@ -12,6 +12,7 @@
     --accent-blue: #00b4d8;
     --accent-green: #06d6a0;
     --accent-red: #ef476f;
+    --accent-yellow: #ffd166;
     --text-color: #ffffff;
 }
 
@@ -23,40 +24,50 @@ body {
 
 .app-container {
     width: 92%; max-width: 480px; height: 95vh; background: var(--card-bg);
-    border-radius: 20px; padding: 20px; box-sizing: border-box;
+    border-radius: 20px; padding: 18px; box-sizing: border-box;
     display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     border: 1px solid rgba(0, 180, 216, 0.3); overflow: hidden;
 }
 
-h1 { font-size: 20px; color: var(--accent-blue); margin: 0 0 5px 0; text-transform: uppercase; }
-p { font-size: 13px; opacity: 0.8; margin-bottom: 15px; }
+h1 { font-size: 18px; color: var(--accent-blue); margin: 0 0 5px 0; text-transform: uppercase; }
+p { font-size: 12px; opacity: 0.8; margin-bottom: 12px; }
 
 .screen { display: none; flex-direction: column; height: 100%; overflow-y: auto; }
 .active-screen { display: flex; }
 
 button {
     background: var(--accent-blue); color: #000; border: none; padding: 12px;
-    border-radius: 12px; font-weight: bold; font-size: 14px; margin: 6px 0;
+    border-radius: 12px; font-weight: bold; font-size: 13px; margin: 5px 0;
     cursor: pointer; transition: transform 0.2s, background 0.2s;
 }
 button:active { transform: scale(0.97); }
 .btn-green { background: var(--accent-green); }
+.btn-yellow { background: var(--accent-yellow); color: #000; }
 .btn-red { background: var(--accent-red); color: white; }
-.btn-back { background: rgba(255,255,255,0.1); color: #fff; margin-top: auto; }
+.btn-back { background: rgba(255,255,255,0.1); color: #fff; margin-top: auto; padding: 10px; }
 
-/* TABLES & CARDS */
+/* ESTILOS DOS NOVOS MÓDULOS */
 .info-card {
     background: rgba(0, 0, 0, 0.2); border-left: 4px solid var(--accent-blue);
-    padding: 10px; margin: 6px 0; border-radius: 6px; text-align: left; font-size: 12px;
+    padding: 10px; margin: 5px 0; border-radius: 6px; text-align: left; font-size: 12px;
 }
-.info-card h3 { margin: 0 0 4px 0; color: var(--accent-blue); font-size: 14px; }
+.info-card h3 { margin: 0 0 4px 0; color: var(--accent-blue); font-size: 13px; }
 
-.quiz-box { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 12px; margin-bottom: 10px; text-align: left; }
-.vitals-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0; }
-.vital-tag { background: rgba(255,255,255,0.08); padding: 8px; border-radius: 8px; font-size: 12px; }
-.vital-tag b { color: var(--accent-blue); display: block; font-size: 11px; }
+select {
+    width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--accent-blue);
+    background: #0d1b2a; color: white; font-weight: bold; margin-bottom: 10px; outline: none;
+}
 
-.score-badge { font-size: 16px; font-weight: bold; color: var(--accent-green); margin-bottom: 10px; }
+.tap-zone {
+    background: rgba(0, 180, 216, 0.15); border: 2px dashed var(--accent-blue);
+    border-radius: 16px; padding: 25px; margin: 15px 0; cursor: pointer; user-select: none;
+}
+.tap-zone:active { background: rgba(0, 180, 216, 0.3); }
+
+.quiz-box { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 12px; margin-bottom: 10px; text-align: left; }
+.vitals-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 8px 0; }
+.vital-tag { background: rgba(255,255,255,0.08); padding: 6px; border-radius: 8px; font-size: 11px; }
+.vital-tag b { color: var(--accent-blue); display: block; font-size: 10px; }
 </style>
 </head>
 <body>
@@ -65,70 +76,106 @@ button:active { transform: scale(0.97); }
 
     <!-- MENU PRINCIPAL -->
     <div id="screen-menu" class="screen active-screen">
-        <span>🚑</span>
-        <h1>ACADEMIA DO SOCORRISTA</h1>
-        <p>Domine a aferição e os valores basais dos Sinais Vitais</p>
+        <span style="font-size: 35px;">🚑</span>
+        <h1>ACADEMIA DO SOCORRISTA PRO</h1>
+        <p>Módulos Práticos de APH e Sinais Vitais</p>
 
         <button onclick="changeScreen('screen-casos')">🚨 PLANTÃO DE TRIAGEM (CASOS)</button>
-        <button class="btn-green" onclick="changeScreen('screen-basais')">📊 GUIA RÁPIDO DE VALORES BASAIS</button>
+        <button class="btn-yellow" onclick="changeScreen('screen-glasgow')">🧠 ESCALA DE GLASGOW (ECG-P)</button>
+        <button class="btn-green" onclick="changeScreen('screen-timer')">⏱️ CRONÔMETRO DE AFERIÇÃO (15s)</button>
+        <button onclick="changeScreen('screen-xabcde')">📋 PROTOCOLO XABCDE & SAMPLE</button>
+        <button class="btn-back" style="margin-top:5px;" onclick="changeScreen('screen-basais')">📊 TABELA DE VALORES BASAIS</button>
 
-        <p style="margin-top: auto; font-size: 10px; opacity: 0.4;">Estudo para APH / Socorrista v1.0</p>
+        <p style="margin-top: auto; font-size: 10px; opacity: 0.4;">Estudo para APH / Socorrista v2.0</p>
     </div>
 
-    <!-- GUIA DE VALORES BASAIS -->
-    <div id="screen-basais" class="screen">
-        <h1>VALORES BASAIS (ADULTO)</h1>
-        <p>Valores normais de referência em repouso:</p>
+    <!-- MÓDULO 1: ESCALA DE GLASGOW -->
+    <div id="screen-glasgow" class="screen">
+        <h1>🧠 ESCALA DE GLASGOW (ECG-P)</h1>
+        <p>Selecione as respostas da avaliação neurológica:</p>
 
-        <div class="info-card">
-            <h3>❤️ FREQUÊNCIA CARDÍACA (FC)</h3>
-            • <b>Normocardia:</b> 60 a 100 bpm<br>
-            • <b>Taquicardia:</b> > 100 bpm<br>
-            • <b>Bradicardia:</b> < 60 bpm
-        </div>
+        <label style="font-size:11px; font-weight:bold; display:block; text-align:left;">👁️ Abertura Ocular (AO):</label>
+        <select id="g-ao" onchange="calcGlasgow()">
+            <option value="4">4 - Espontânea</option>
+            <option value="3">3 - À ordem verbal</option>
+            <option value="2">2 - À pressão / dor</option>
+            <option value="1">1 - Ausente</option>
+        </select>
 
-        <div class="info-card">
-            <h3>🫁 FREQUÊNCIA RESPIRATÓRIA (FR)</h3>
-            • <b>Eupneia:</b> 12 a 20 mrpm<br>
-            • <b>Taquipneia:</b> > 20 mrpm<br>
-            • <b>Bradipneia:</b> < 12 mrpm
-        </div>
+        <label style="font-size:11px; font-weight:bold; display:block; text-align:left;">🗣️ Resposta Verbal (RV):</label>
+        <select id="g-rv" onchange="calcGlasgow()">
+            <option value="5">5 - Orientado</option>
+            <option value="4">4 - Confuso</option>
+            <option value="3">3 - Palavras Inapropriadas</option>
+            <option value="2">2 - Sons Incompreensíveis</option>
+            <option value="1">1 - Ausente</option>
+        </select>
 
-        <div class="info-card">
-            <h3>🩸 PRESSÃO ARTERIAL (PA)</h3>
-            • <b>Ótima:</b> < 120 x 80 mmHg<br>
-            • <b>Normotensão:</b> ≤ 120-129 x 80-84 mmHg<br>
-            • <b>Hipertensão:</b> ≥ 140 x 90 mmHg<br>
-            • <b>Hipotensão:</b> PAS < 90 mmHg
-        </div>
+        <label style="font-size:11px; font-weight:bold; display:block; text-align:left;">💪 Resposta Motora (RM):</label>
+        <select id="g-rm" onchange="calcGlasgow()">
+            <option value="6">6 - Obedece a comandos</option>
+            <option value="5">5 - Localiza a dor</option>
+            <option value="4">4 - Flexão normal (retirada)</option>
+            <option value="3">3 - Flexão anormal (decorticação)</option>
+            <option value="2">2 - Extensão (descerebração)</option>
+            <option value="1">1 - Ausente</option>
+        </select>
 
-        <div class="info-card">
-            <h3>🌡️ TEMPERATURA (T)</h3>
-            • <b>Normotermia:</b> 36.0 °C a 37.2 °C<br>
-            • <b>Febrícula:</b> 37.3 °C a 37.7 °C<br>
-            • <b>Hipertermia (Febre):</b> ≥ 37.8 °C<br>
-            • <b>Hipotermia:</b> < 35.0 °C
-        </div>
+        <label style="font-size:11px; font-weight:bold; display:block; text-align:left;">👁️‍🗨️ Reatividade Pupilar (PUPILA):</label>
+        <select id="g-p" onchange="calcGlasgow()">
+            <option value="0">0 - Ambas reagem à luz</option>
+            <option value="-1">-1 - Apenas uma reage</option>
+            <option value="-2">-2 - Nenhuma reage (Arreativas)</option>
+        </select>
 
-        <div class="info-card">
-            <h3>🩸 OXIMETRIA (SpO2) E GLICEMIA</h3>
-            • <b>SpO2 Normal:</b> 95% a 100% (Ar ambiente)<br>
-            • <b>Hipóxia Leve/Mod:</b> 90% a 94%<br>
-            • <b>Glicemia Jejum:</b> 70 a 99 mg/dL
+        <div class="info-card" style="border-left-color: var(--accent-yellow); margin-top:10px;">
+            <h3 style="color:var(--accent-yellow);">RESULTADO FINAL:</h3>
+            <div id="glasgow-score" style="font-size:20px; font-weight:900;"> Pontuação: 15 (Normal)</div>
+            <div id="glasgow-desc" style="font-size:11px; margin-top:4px; opacity:0.9;">TCE Leve ou Ausente</div>
         </div>
 
         <button class="btn-back" onclick="changeScreen('screen-menu')">↩ Voltar ao Menu</button>
     </div>
 
-    <!-- MÓDULO CASOS CLÍNICOS -->
+    <!-- MÓDULO 2: CRONÔMETRO DE AFERIÇÃO -->
+    <div id="screen-timer" class="screen">
+        <h1>⏱️ CRONÔMETRO DE AFERIÇÃO</h1>
+        <p>Toque na área abaixo a cada pulso/respiração sentida durante os 15 segundos:</p>
+
+        <div class="tap-zone" onclick="registerTap()">
+            <span style="font-size:30px;">👉 TOQUE AQUI 👈</span>
+            <div id="timer-display" style="font-size:22px; font-weight:bold; color:var(--accent-green); margin-top:8px;">Aguardando 1º toque...</div>
+            <div id="tap-count" style="font-size:14px; margin-top:4px;">Toques registrados: 0</div>
+        </div>
+
+        <div class="info-card">
+            <h3>📊 RESULTADO CALCULADO (x4):</h3>
+            <div id="calc-result" style="font-size:16px; font-weight:bold;">0 BPM / MRPM</div>
+            <div id="calc-status" style="font-size:11px; color:var(--accent-blue);">Inicie a contagem acima.</div>
+        </div>
+
+        <button class="btn-yellow" onclick="resetAfericaoTimer()">🔄 Reiniciar Contagem</button>
+        <button class="btn-back" onclick="resetAfericaoTimer(); changeScreen('screen-menu')">↩ Voltar ao Menu</button>
+    </div>
+
+    <!-- MÓDULO 3: PROTOCOLO XABCDE & SAMPLE -->
+    <div id="screen-xabcde" class="screen">
+        <h1>📋 XABCDE & SAMPLE</h1>
+        <div class="info-card" style="margin-bottom:10px;">
+            <b id="x-q-text">Carregando pergunta...</b>
+        </div>
+        <div id="x-options"></div>
+
+        <button class="btn-back" onclick="changeScreen('screen-menu')">↩ Voltar ao Menu</button>
+    </div>
+
+    <!-- MÓDULO 4: CASOS CLÍNICOS -->
     <div id="screen-casos" class="screen">
         <h1>CASO CLÍNICO</h1>
-        <div class="score-badge" id="case-score">Pontuação: 0</div>
-
         <div class="quiz-box">
             <b id="patient-name">Paciente: Adulto, 42 anos</b>
             <p id="patient-desc" style="font-size: 11px; margin: 4px 0;">Relata tontura e suor frio após corrida.</p>
-            
+
             <div class="vitals-grid">
                 <div class="vital-tag"><b>PA:</b> <span id="val-pa">120x80</span></div>
                 <div class="vital-tag"><b>FC:</b> <span id="val-fc">115 bpm</span></div>
@@ -145,86 +192,131 @@ button:active { transform: scale(0.97); }
         <button class="btn-back" onclick="changeScreen('screen-menu')">↩ Voltar ao Menu</button>
     </div>
 
+    <!-- MÓDULO 5: TABELA VALORES BASAIS -->
+    <div id="screen-basais" class="screen">
+        <h1>VALORES BASAIS (ADULTO)</h1>
+        <div class="info-card"><h3>❤️ FREQUÊNCIA CARDÍACA (FC)</h3>• <b>Normocardia:</b> 60 a 100 bpm<br>• <b>Taquicardia:</b> > 100 bpm<br>• <b>Bradicardia:</b> < 60 bpm</div>
+        <div class="info-card"><h3>🫁 FREQUÊNCIA RESPIRATÓRIA (FR)</h3>• <b>Eupneia:</b> 12 a 20 mrpm<br>• <b>Taquipneia:</b> > 20 mrpm<br>• <b>Bradipneia:</b> < 12 mrpm</div>
+        <div class="info-card"><h3>🩸 PRESSÃO ARTERIAL (PA)</h3>• <b>Normotensão:</b> ≤ 120x80 mmHg<br>• <b>Hipertensão:</b> ≥ 140x90 mmHg<br>• <b>Hipotensão:</b> PAS < 90 mmHg</div>
+        <button class="btn-back" onclick="changeScreen('screen-menu')">↩ Voltar ao Menu</button>
+    </div>
+
 </div>
 
 <script>
-let currentCaseIndex = 0;
-let points = 0;
-
-const casesDatabase = [
-    {
-        name: "Paciente: Homem, 35 anos",
-        desc: "Queixa de palpitação e ansiedade no trabalho.",
-        pa: "120x80 mmHg", fc: "125 bpm", fr: "16 mrpm", spo2: "98%", temp: "36.6 °C", gli: "88 mg/dL",
-        question: "Como você classifica a Frequência Cardíaca (FC) de 125 bpm?",
-        options: [
-            { text: "Taquicardia", correct: true },
-            { text: "Normocardia", correct: false },
-            { text: "Bradicardia", correct: false }
-        ]
-    },
-    {
-        name: "Paciente: Mulher, 68 anos",
-        desc: "Encontrada prostrada no frio da manhã.",
-        pa: "110x70 mmHg", fc: "52 bpm", fr: "10 mrpm", spo2: "95%", temp: "34.2 °C", gli: "92 mg/dL",
-        question: "A temperatura de 34.2 °C indica:",
-        options: [
-            { text: "Hipotermia", correct: true },
-            { text: "Febrícula", correct: false },
-            { text: "Normotermia", correct: false }
-        ]
-    },
-    {
-        name: "Paciente: Jovem, 20 anos",
-        desc: "Crise de ansiedade pós-trauma.",
-        pa: "130x85 mmHg", fc: "98 bpm", fr: "28 mrpm", spo2: "99%", temp: "36.8 °C", gli: "95 mg/dL",
-        question: "A Frequência Respiratória (FR) de 28 mrpm é chamada de:",
-        options: [
-            { text: "Taquipneia", correct: true },
-            { text: "Eupneia", correct: false },
-            { text: "Bradipneia", correct: false }
-        ]
-    },
-    {
-        name: "Paciente: Homem, 55 anos",
-        desc: "Forte dor de cabeça na região da nuca.",
-        pa: "170x105 mmHg", fc: "82 bpm", fr: "18 mrpm", spo2: "96%", temp: "36.5 °C", gli: "105 mg/dL",
-        question: "A Pressão Arterial (PA) de 170x105 mmHg configura:",
-        options: [
-            { text: "Hipertensão", correct: true },
-            { text: "Normotensão", correct: false },
-            { text: "Hipotensão", correct: false }
-        ]
-    },
-    {
-        name: "Paciente: Criança, 8 anos",
-        desc: "Lethargia e falta de ar moderada.",
-        pa: "100x65 mmHg", fc: "90 bpm", fr: "18 mrpm", spo2: "89%", temp: "36.7 °C", gli: "85 mg/dL",
-        question: "A Oximetria (SpO2) de 89% em ar ambiente indica:",
-        options: [
-            { text: "Hipóxia (Necessita O2)", correct: true },
-            { text: "Saturação Normal", correct: false },
-            { text: "Hiperoxia", correct: false }
-        ]
-    }
-];
-
 function changeScreen(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen'));
     document.getElementById(id).classList.add('active-screen');
     if(id === 'screen-casos') loadCase();
+    if(id === 'screen-xabcde') loadXabcdeQuestion();
+    if(id === 'screen-glasgow') calcGlasgow();
 }
 
-function loadCase() {
-    if(currentCaseIndex >= casesDatabase.length) {
-        alert(`🏆 Parabéns, Socorrista! Você concluiu a rodada de triagem com ${points} pontos!`);
-        currentCaseIndex = 0; points = 0;
-        changeScreen('screen-menu');
-        return;
-    }
+// LOGICA ESCALA DE GLASGOW
+function calcGlasgow() {
+    const ao = parseInt(document.getElementById("g-ao").value);
+    const rv = parseInt(document.getElementById("g-rv").value);
+    const rm = parseInt(document.getElementById("g-rm").value);
+    const p = parseInt(document.getElementById("g-p").value);
 
-    const c = casesDatabase[currentCaseIndex];
-    document.getElementById("case-score").innerHTML = `Pontuação: ${points}`;
+    const total = ao + rv + rm + p;
+    let desc = "Neurologicamente Íntegro / Normal";
+    if(total <= 8) desc = "🚨 TCE GRAVE (Necessita de Vias Aéreas Avançadas / Intubação)";
+    else if(total >= 9 && total <= 12) desc = "⚠️ TCE MODERADO (Monitorar continuamente)";
+    else if(total >= 13 && total < 15) desc = "🟢 TCE LEVE (Observação neurológica)";
+
+    document.getElementById("glasgow-score").innerHTML = `Pontuação: ${total} ${p < 0 ? '('+p+' Pupila)' : ''}`;
+    document.getElementById("glasgow-desc").innerHTML = desc;
+}
+
+// LOGICA CRONOMETRO AFERICAO
+let tapCount = 0;
+let tapTimer = null;
+let timeLeft = 15;
+let timerRunning = false;
+
+function registerTap() {
+    if(!timerRunning) {
+        timerRunning = true;
+        timeLeft = 15;
+        tapCount = 1;
+        document.getElementById("tap-count").innerHTML = `Toques registrados: ${tapCount}`;
+        
+        tapTimer = setInterval(() => {
+            timeLeft--;
+            document.getElementById("timer-display").innerHTML = `⏳ Tempo: ${timeLeft}s`;
+            if(timeLeft <= 0) {
+                clearInterval(tapTimer);
+                timerRunning = false;
+                evaluateAfericao();
+            }
+        }, 1000);
+    } else {
+        tapCount++;
+        document.getElementById("tap-count").innerHTML = `Toques registrados: ${tapCount}`;
+    }
+}
+
+function evaluateAfericao() {
+    const totalBpm = tapCount * 4;
+    document.getElementById("calc-result").innerHTML = `${totalBpm} BPM / MRPM`;
+    let status = "Valor dentro da faixa esperada em repouso.";
+    if(totalBpm > 100) status = "⚠️ Frequência Elevada (Ex: Taquicardia ou Taquipneia)";
+    else if(totalBpm < 60) status = "⚠️ Frequência Baixa (Ex: Bradicardia ou Bradipneia)";
+    document.getElementById("calc-status").innerHTML = status;
+    document.getElementById("timer-display").innerHTML = "✅ Concluído!";
+}
+
+function resetAfericaoTimer() {
+    clearInterval(tapTimer);
+    timerRunning = false;
+    tapCount = 0;
+    document.getElementById("timer-display").innerHTML = "Aguardando 1º toque...";
+    document.getElementById("tap-count").innerHTML = "Toques registrados: 0";
+    document.getElementById("calc-result").innerHTML = "0 BPM / MRPM";
+    document.getElementById("calc-status").innerHTML = "Inicie a contagem acima.";
+}
+
+// LOGICA XABCDE & SAMPLE
+let xIndex = 0;
+const xQuestions = [
+    { q: "No atendimento inicial de trauma (XABCDE), qual a primeira letra e prioridade absoluta?", options: [{t:"X: Contenção de Hemorragia Exsangue grave", r:true}, {t:"A: Abertura de Vias Aéreas", r:false}] },
+    { q: "O que significa a letra 'M' na anamnese rápida do protocolo SAMPLE?", options: [{t:"Medicamentos em uso habitual", r:true}, {t:"Movimentação dos membros", r:false}] },
+    { q: "Na letra 'B' do XABCDE, qual avaliação principal deve ser realizada?", options: [{t:"Boa Ventilação e Ausculta Pulmonar", r:true}, {t:"Batimentos Cardíacos e Pulso", r:false}] }
+];
+
+function loadXabcdeQuestion() {
+    if(xIndex >= xQuestions.length) xIndex = 0;
+    const q = xQuestions[xIndex];
+    document.getElementById("x-q-text").innerHTML = q.q;
+    const optDiv = document.getElementById("x-options");
+    optDiv.innerHTML = "";
+    q.options.forEach(o => {
+        const btn = document.createElement("button");
+        btn.innerHTML = o.t;
+        btn.onclick = () => {
+            if(o.r) alert("🟢 RESPOSTA CORRETA!");
+            else alert("🔴 INCORRETO!");
+            xIndex++;
+            loadXabcdeQuestion();
+        };
+        optDiv.appendChild(btn);
+    });
+}
+
+// CASOS CLINICOS
+let currentCaseIndex = 0;
+const casesDatabase = [
+    {
+        name: "Paciente: Homem, 35 anos", desc: "Queixa de palpitação e ansiedade no trabalho.",
+        pa: "120x80 mmHg", fc: "125 bpm", fr: "16 mrpm", spo2: "98%", temp: "36.6 °C", gli: "88 mg/dL",
+        question: "Como você classifica a Frequência Cardíaca (FC) de 125 bpm?",
+        options: [{ text: "Taquicardia", correct: true }, { text: "Normocardia", correct: false }]
+    }
+];
+
+function loadCase() {
+    const c = casesDatabase[0];
     document.getElementById("patient-name").innerHTML = c.name;
     document.getElementById("patient-desc").innerHTML = c.desc;
     document.getElementById("val-pa").innerHTML = c.pa;
@@ -240,16 +332,7 @@ function loadCase() {
     c.options.forEach(opt => {
         const btn = document.createElement("button");
         btn.innerHTML = opt.text;
-        btn.onclick = () => {
-            if(opt.correct) {
-                alert("🟢 RESPOSTA CORRETA!");
-                points += 100;
-            } else {
-                alert("🔴 INCORRETO! Revise a tabela de sinais vitais.");
-            }
-            currentCaseIndex++;
-            loadCase();
-        };
+        btn.onclick = () => alert(opt.correct ? "🟢 CORRETO!" : "🔴 INCORRETO!");
         optDiv.appendChild(btn);
     });
 }
