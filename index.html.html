@@ -91,7 +91,7 @@ button:active { transform: scale(0.97); }
 .ref-table th, .ref-table td { border: 1px solid rgba(255,255,255,0.1); padding: 4px 6px; text-align: left; }
 .ref-table th { background: rgba(0, 240, 255, 0.15); color: var(--accent-blue); }
 
-/* MONITOR CARDIÁCO */
+/* MONITOR CARDIÁCO MULTIPARAMÉTRICO */
 .monitor-panel {
     background: #020408; border: 1.5px solid #1a2936; border-radius: 8px;
     padding: 4px; margin-bottom: 4px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3px; flex-shrink: 0;
@@ -150,7 +150,7 @@ button:active { transform: scale(0.97); }
 .code-section { background: rgba(0,0,0,0.3); padding: 8px; border-radius: 6px; margin-bottom: 6px; border-left: 3px solid var(--accent-blue); font-size: 10px; text-align: left; }
 .code-section h3 { font-size: 11px; color: var(--accent-blue); margin-bottom: 4px; text-transform: uppercase; }
 
-/* MODAIS (RCP, GLASGOW, GUIAS) */
+/* MODAIS */
 .modal-overlay {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(5, 10, 18, 0.98); z-index: 90; display: none;
@@ -220,7 +220,7 @@ button:active { transform: scale(0.97); }
 
             <label style="color:var(--accent-yellow); font-weight:bold;">3. Resposta Motora (1-6):</label>
             <select class="glasgow-select" id="g-motor" onchange="calcGlasgow()">
-                <option value="6">Obedece a comandos (6)</option>
+                <option value="6">Obedece a ordens (6)</option>
                 <option value="5">Localiza a dor (5)</option>
                 <option value="4">Flexão normal / Retirada (4)</option>
                 <option value="3">Flexão anormal / Decorticação (3)</option>
@@ -242,31 +242,31 @@ button:active { transform: scale(0.97); }
         <button class="btn-back" onclick="closeGlasgowModal()">REGISTRAR E FECHAR</button>
     </div>
 
-    <!-- MODAL DE GUIA RÁPIDO DE SINAIS VITAIS -->
+    <!-- MODAL DE GUIA RÁPIDO DE SINAIS VITAIS (IGUAL AO MONITOR MULTIPARAMÉTRICO) -->
     <div class="modal-overlay" id="vitals-modal">
-        <h2 style="color:var(--accent-green);">🩺 GUIA RÁPIDO DE SINAIS VITAIS POR FAIXA ETÁRIA</h2>
+        <h2 style="color:var(--accent-green);">🩺 GUIA RÁPIDO DE SINAIS VITAIS (VALORES DE REFERÊNCIA)</h2>
         <div style="overflow-y:auto; padding:4px;">
             <table class="ref-table">
                 <thead>
                     <tr>
-                        <th>Faixa Etária</th>
-                        <th>FC (BPM)</th>
-                        <th>FR (MRPM)</th>
-                        <th>PAS (mmHg)</th>
+                        <th>Parâmetro</th>
+                        <th>Recém-Nascido</th>
+                        <th>Criança (1-8a)</th>
+                        <th>Adulto Normal</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr><td>Recém-Nascido</td><td>100 - 180</td><td>30 - 60</td><td>60 - 90</td></tr>
-                    <tr><td>Lactante (1-12m)</td><td>100 - 160</td><td>30 - 53</td><td>70 - 100</td></tr>
-                    <tr><td>Criança (1-8a)</td><td>80 - 120</td><td>20 - 30</td><td>80 - 110</td></tr>
-                    <tr><td>Adulto (18-60a)</td><td>60 - 100</td><td>12 - 20</td><td>100 - 120</td></tr>
-                    <tr><td>Idoso (>60a)</td><td>60 - 100</td><td>12 - 24</td><td>100 - 140</td></tr>
+                    <tr><td><b>FC (BPM)</b></td><td>100 - 180</td><td>80 - 120</td><td>60 - 100</td></tr>
+                    <tr><td><b>PA (mmHg)</b></td><td>60x40 - 90x60</td><td>80x50 - 110x70</td><td>100x60 - 120x80</td></tr>
+                    <tr><td><b>SpO2 (%)</b></td><td>&ge;95%</td><td>&ge;95%</td><td>95% - 100%</td></tr>
+                    <tr><td><b>FR (MRPM)</b></td><td>30 - 60</td><td>20 - 30</td><td>12 - 20</td></tr>
+                    <tr><td><b>Glicose (mg/dL)</b></td><td>60 - 100</td><td>70 - 100</td><td>70 - 99</td></tr>
+                    <tr><td><b>Temp (°C)</b></td><td>36.5 - 37.5</td><td>36.1 - 37.2</td><td>36.1 - 37.2</td></tr>
                 </tbody>
             </table>
             <div style="text-align:left; font-size:9px; margin-top:8px; color:var(--text-dim);">
-                • <b>Glicemia Capilar (HGT):</b> Normal: 70-99 mg/dL | Hipoglicemia: &lt;70 mg/dL<br>
-                • <b>Saturação (SpO2):</b> Normal: &ge;95% | Hipóxia Leve: 90-94% | Hipóxia Grave: &lt;90%<br>
-                • <b>Temperatura:</b> Normal: 36.1 - 37.2°C | Febre: &gt;37.8°C
+                • <b>Hipóxia Grave:</b> SpO2 &lt; 90% | <b>Choque / Hipotensão:</b> PAS &lt; 90 mmHg<br>
+                • <b>Hipoglicemia:</b> Glicose &lt; 70 mg/dL | <b>Hipotermia:</b> Temp &lt; 35.0°C
             </div>
         </div>
         <button class="btn-back" onclick="document.getElementById('vitals-modal').style.display='none'">FECHAR GUIA</button>
@@ -294,10 +294,10 @@ button:active { transform: scale(0.97); }
         <h2>GUIAS DE CONSULTA RÁPIDA:</h2>
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:4px;">
             <button class="btn-green" onclick="document.getElementById('vitals-modal').style.display='flex'">
-                🩺 GUIA SINAIS VITAIS
+                🩺 TABELA SINAIS VITAIS
             </button>
             <button class="btn-purple" onclick="openGlasgowModal()">
-                🧠 ESCALA DE GLASGOW
+                🧠 TABELA GLASGOW (ECG-P)
             </button>
         </div>
 
@@ -634,7 +634,7 @@ function toggleSimXray() {
 }
 
 /* -------------------------------------------------------------------------- */
-/* THREE.JS 3D ENGINE (ATLAS - MODELOS ANATÔMICOS INDIVIDUAIS) */
+/* THREE.JS 3D ENGINE (ATLAS - MODELOS ANATÔMICOS ESPECÍFICOS DE ÓRGÃOS) */
 /* -------------------------------------------------------------------------- */
 function initAtlas3D() {
     const container = document.getElementById('canvas-3d-atlas');
@@ -648,13 +648,13 @@ function initAtlas3D() {
     const height = container.clientHeight || 180;
 
     atlasCamera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
-    atlasCamera.position.set(0, 0.5, 2.6);
+    atlasCamera.position.set(0, 0.2, 2.8);
 
     atlasRenderer = new THREE.WebGLRenderer({ antialias: true });
     atlasRenderer.setSize(width, height);
     container.appendChild(atlasRenderer.domElement);
 
-    const light = new THREE.DirectionalLight(0x00f0ff, 1.5);
+    const light = new THREE.DirectionalLight(0xffffff, 1.5);
     light.position.set(2, 3, 2);
     atlasScene.add(light);
     atlasScene.add(new THREE.AmbientLight(0xffffff, 0.8));
@@ -675,7 +675,7 @@ function initAtlas3D() {
 }
 
 /* -------------------------------------------------------------------------- */
-/* ATLAS DE ANATOMIA DETALHADO - 11 SISTEMAS COM GEOMETRIA 3D PRÓPRIA */
+/* ATLAS DE ANATOMIA DETALHADO - MODELOS ANATÔMICOS 3D DE ÓRGÃOS */
 /* -------------------------------------------------------------------------- */
 const sysData = {
     cardio: { 
@@ -741,32 +741,99 @@ function loadSystem3D(sysKey) {
 
     document.getElementById("sys-desc").innerHTML = `<div class='sys-title'>${data.title}</div>${data.desc}`;
     
+    // RECONSTRUÇÃO DOS MODELOS ANATÔMICOS 3D DOS ÓRGÃOS
     if(atlasSystemGroup) {
         while(atlasSystemGroup.children.length > 0) atlasSystemGroup.remove(atlasSystemGroup.children[0]);
 
-        const mat = new THREE.MeshPhongMaterial({ color: data.color, wireframe: false });
+        const mainMat = new THREE.MeshPhongMaterial({ color: data.color, shininess: 80 });
+        const redMat = new THREE.MeshPhongMaterial({ color: 0xff1744 });
+        const blueMat = new THREE.MeshPhongMaterial({ color: 0x00f0ff });
+        const whiteMat = new THREE.MeshPhongMaterial({ color: 0xffffff });
 
         if(data.type === 'heart') {
-            const heartGeo = new THREE.SphereGeometry(0.4, 16, 16);
-            const heart = new THREE.Mesh(heartGeo, mat);
-            const aortaGeo = new THREE.CylinderGeometry(0.08, 0.08, 0.6);
-            const aorta = new THREE.Mesh(aortaGeo, new THREE.MeshPhongMaterial({ color: 0xffffff }));
-            aorta.position.y = 0.3;
-            atlasSystemGroup.add(heart); atlasSystemGroup.add(aorta);
+            // CORAÇÃO ANATÔMICO + AORTA E CAVA
+            const heartGeo = new THREE.SphereGeometry(0.35, 16, 16);
+            heartGeo.scale(0.9, 1.2, 0.9);
+            const heart = new THREE.Mesh(heartGeo, mainMat);
+
+            const aortaGeo = new THREE.CylinderGeometry(0.08, 0.08, 0.5);
+            const aorta = new THREE.Mesh(aortaGeo, redMat);
+            aorta.position.set(0.1, 0.35, 0);
+
+            const cavaGeo = new THREE.CylinderGeometry(0.07, 0.07, 0.5);
+            const cava = new THREE.Mesh(cavaGeo, blueMat);
+            cava.position.set(-0.1, 0.35, 0);
+
+            atlasSystemGroup.add(heart); atlasSystemGroup.add(aorta); atlasSystemGroup.add(cava);
         } else if(data.type === 'lungs') {
-            const lungGeo = new THREE.ConeGeometry(0.25, 0.6, 16);
-            const l1 = new THREE.Mesh(lungGeo, mat); l1.position.x = -0.25;
-            const l2 = new THREE.Mesh(lungGeo, mat); l2.position.x = 0.25;
-            atlasSystemGroup.add(l1); atlasSystemGroup.add(l2);
+            // PULMÕES + TRAQUEIA
+            const traqueiaGeo = new THREE.CylinderGeometry(0.06, 0.06, 0.6);
+            const traqueia = new THREE.Mesh(traqueiaGeo, whiteMat);
+            traqueia.position.y = 0.3;
+
+            const lungGeo = new THREE.ConeGeometry(0.28, 0.65, 16);
+            const l1 = new THREE.Mesh(lungGeo, mainMat); l1.position.set(-0.28, -0.05, 0);
+            const l2 = new THREE.Mesh(lungGeo, mainMat); l2.position.set(0.28, -0.05, 0);
+
+            atlasSystemGroup.add(traqueia); atlasSystemGroup.add(l1); atlasSystemGroup.add(l2);
         } else if(data.type === 'brain') {
-            const brainGeo = new THREE.SphereGeometry(0.35, 16, 16);
-            brainGeo.scale(1.2, 0.8, 1);
-            const brain = new THREE.Mesh(brainGeo, mat);
-            atlasSystemGroup.add(brain);
+            // CÉREBRO + CEREBELO + TRONCO ENCEFÁLICO
+            const cerebrumGeo = new THREE.SphereGeometry(0.38, 16, 16);
+            cerebrumGeo.scale(1.2, 0.85, 1);
+            const cerebrum = new THREE.Mesh(cerebrumGeo, mainMat);
+
+            const cerebellumGeo = new THREE.SphereGeometry(0.18, 16, 16);
+            const cerebellum = new THREE.Mesh(cerebellumGeo, new THREE.MeshPhongMaterial({ color: 0x8855aa }));
+            cerebellum.position.set(0, -0.28, -0.2);
+
+            const stemGeo = new THREE.CylinderGeometry(0.08, 0.06, 0.4);
+            const stem = new THREE.Mesh(stemGeo, whiteMat);
+            stem.position.set(0, -0.35, 0);
+
+            atlasSystemGroup.add(cerebrum); atlasSystemGroup.add(cerebellum); atlasSystemGroup.add(stem);
+        } else if(data.type === 'digestive') {
+            // ESTÔMAGO + INTESTINO
+            const stomachGeo = new THREE.SphereGeometry(0.25, 16, 16);
+            stomachGeo.scale(1.3, 0.8, 0.9);
+            const stomach = new THREE.Mesh(stomachGeo, mainMat);
+            stomach.position.set(-0.1, 0.2, 0);
+
+            const intestineGeo = new THREE.TorusGeometry(0.28, 0.12, 16, 32);
+            const intestine = new THREE.Mesh(intestineGeo, new THREE.MeshPhongMaterial({ color: 0xff9100 }));
+            intestine.position.set(0, -0.2, 0);
+
+            atlasSystemGroup.add(stomach); atlasSystemGroup.add(intestine);
+        } else if(data.type === 'urinary') {
+            // RINS + URETERES + BEXIGA
+            const kidneyGeo = new THREE.SphereGeometry(0.15, 16, 16);
+            kidneyGeo.scale(0.8, 1.3, 0.8);
+            
+            const k1 = new THREE.Mesh(kidneyGeo, mainMat); k1.position.set(-0.3, 0.2, 0);
+            const k2 = new THREE.Mesh(kidneyGeo, mainMat); k2.position.set(0.3, 0.2, 0);
+
+            const bladderGeo = new THREE.SphereGeometry(0.18, 16, 16);
+            const bladder = new THREE.Mesh(bladderGeo, new THREE.MeshPhongMaterial({ color: 0xffd166 }));
+            bladder.position.set(0, -0.35, 0);
+
+            atlasSystemGroup.add(k1); atlasSystemGroup.add(k2); atlasSystemGroup.add(bladder);
+        } else if(data.type === 'skeleton') {
+            // CAIXA TORÁCICA / COLUNA
+            const spineGeo = new THREE.CylinderGeometry(0.06, 0.06, 0.9);
+            const spine = new THREE.Mesh(spineGeo, whiteMat);
+
+            const ribGeo = new THREE.TorusGeometry(0.3, 0.03, 8, 24, Math.PI);
+            for(let i=0; i<4; i++) {
+                const rib = new THREE.Mesh(ribGeo, whiteMat);
+                rib.position.y = 0.3 - (i * 0.15);
+                rib.rotation.x = Math.PI / 2;
+                atlasSystemGroup.add(rib);
+            }
+            atlasSystemGroup.add(spine);
         } else {
-            const genericGeo = new THREE.BoxGeometry(0.5, 0.5, 0.5);
-            const mesh = new THREE.Mesh(genericGeo, mat);
-            atlasSystemGroup.add(mesh);
+            // MODELO MUSCULAR / TEGUMENTAR / OUTROS
+            const bodyGeo = new THREE.CylinderGeometry(0.22, 0.18, 0.8, 16);
+            const body = new THREE.Mesh(bodyGeo, mainMat);
+            atlasSystemGroup.add(body);
         }
     }
 }
@@ -800,7 +867,7 @@ function startScenario(type, isRandom = false) {
     if(type === 'ovace') {
         if(!isRandom) document.getElementById("top-loc").innerHTML = "GPS: RESTAURANTE";
         pState.fr = 0; pState.spo2 = 80; pState.fc = 118; pState.ovaceBlocked = true;
-        if(!isRandom) updateFeedback("Vítima agitando as mãos no pescoço! Apneia por engasgo grave.");
+        if(!isRandom) updateFeedback("Vítima agitating as mãos no pescoço! Apneia por engasgo grave.");
     } else if(type === 'hemo_int') {
         if(!isRandom) document.getElementById("top-loc").innerHTML = "GPS: RODOVIA KM 42";
         pState.bleedRate = 2;
