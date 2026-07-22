@@ -46,7 +46,6 @@ button:active { transform: scale(0.97); }
 .btn-red { background: var(--accent-red); color: white; }
 .btn-back { background: rgba(255,255,255,0.1); color: #fff; margin-top: auto; padding: 10px; }
 
-/* ESTILOS DOS NOVOS MÓDULOS */
 .info-card {
     background: rgba(0, 0, 0, 0.2); border-left: 4px solid var(--accent-blue);
     padding: 10px; margin: 5px 0; border-radius: 6px; text-align: left; font-size: 12px;
@@ -55,7 +54,7 @@ button:active { transform: scale(0.97); }
 
 select {
     width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--accent-blue);
-    background: #0d1b2a; color: white; font-weight: bold; margin-bottom: 10px; outline: none;
+    background: #0d1b2a; color: white; font-weight: bold; margin-bottom: 8px; outline: none; font-size: 12px;
 }
 
 .tap-zone {
@@ -80,39 +79,45 @@ select {
         <h1>ACADEMIA DO SOCORRISTA PRO</h1>
         <p>Módulos Práticos de APH e Sinais Vitais</p>
 
+        <button class="btn-yellow" onclick="changeScreen('screen-glasgow')">🧠 CASOS PRÁTICOS: GLASGOW (ECG-P)</button>
         <button onclick="changeScreen('screen-casos')">🚨 PLANTÃO DE TRIAGEM (CASOS)</button>
-        <button class="btn-yellow" onclick="changeScreen('screen-glasgow')">🧠 ESCALA DE GLASGOW (ECG-P)</button>
         <button class="btn-green" onclick="changeScreen('screen-timer')">⏱️ CRONÔMETRO DE AFERIÇÃO (15s)</button>
         <button onclick="changeScreen('screen-xabcde')">📋 PROTOCOLO XABCDE & SAMPLE</button>
         <button class="btn-back" style="margin-top:5px;" onclick="changeScreen('screen-basais')">📊 TABELA DE VALORES BASAIS</button>
 
-        <p style="margin-top: auto; font-size: 10px; opacity: 0.4;">Estudo para APH / Socorrista v2.0</p>
+        <p style="margin-top: auto; font-size: 10px; opacity: 0.4;">Estudo para APH / Socorrista v2.5</p>
     </div>
 
-    <!-- MÓDULO 1: ESCALA DE GLASGOW -->
+    <!-- MÓDULO 1: CASOS PRÁTICOS DE GLASGOW -->
     <div id="screen-glasgow" class="screen">
-        <h1>🧠 ESCALA DE GLASGOW (ECG-P)</h1>
-        <p>Selecione as respostas da avaliação neurológica:</p>
+        <h1>🧠 CASO DE TRAUMA (GLASGOW)</h1>
+        
+        <div class="quiz-box" style="border-left: 4px solid var(--accent-yellow);">
+            <b id="g-case-title" style="color:var(--accent-yellow); font-size:13px;">Cenário 1/4</b>
+            <p id="g-case-desc" style="font-size: 12px; margin: 6px 0; line-height: 1.4;">Carregando história clínica...</p>
+        </div>
 
-        <label style="font-size:11px; font-weight:bold; display:block; text-align:left;">👁️ Abertura Ocular (AO):</label>
-        <select id="g-ao" onchange="calcGlasgow()">
+        <p style="font-size:11px; font-weight:bold; margin:2px 0; text-align:left;">Avalie e selecione os parâmetros do paciente:</p>
+
+        <label style="font-size:11px; display:block; text-align:left;">👁️ Abertura Ocular (AO):</label>
+        <select id="g-ao">
             <option value="4">4 - Espontânea</option>
             <option value="3">3 - À ordem verbal</option>
             <option value="2">2 - À pressão / dor</option>
             <option value="1">1 - Ausente</option>
         </select>
 
-        <label style="font-size:11px; font-weight:bold; display:block; text-align:left;">🗣️ Resposta Verbal (RV):</label>
-        <select id="g-rv" onchange="calcGlasgow()">
+        <label style="font-size:11px; display:block; text-align:left;">🗣️ Resposta Verbal (RV):</label>
+        <select id="g-rv">
             <option value="5">5 - Orientado</option>
             <option value="4">4 - Confuso</option>
             <option value="3">3 - Palavras Inapropriadas</option>
-            <option value="2">2 - Sons Incompreensíveis</option>
+            <option value="2">2 - Sons Incompreensíveis (Gemidos)</option>
             <option value="1">1 - Ausente</option>
         </select>
 
-        <label style="font-size:11px; font-weight:bold; display:block; text-align:left;">💪 Resposta Motora (RM):</label>
-        <select id="g-rm" onchange="calcGlasgow()">
+        <label style="font-size:11px; display:block; text-align:left;">💪 Resposta Motora (RM):</label>
+        <select id="g-rm">
             <option value="6">6 - Obedece a comandos</option>
             <option value="5">5 - Localiza a dor</option>
             <option value="4">4 - Flexão normal (retirada)</option>
@@ -121,19 +126,14 @@ select {
             <option value="1">1 - Ausente</option>
         </select>
 
-        <label style="font-size:11px; font-weight:bold; display:block; text-align:left;">👁️‍🗨️ Reatividade Pupilar (PUPILA):</label>
-        <select id="g-p" onchange="calcGlasgow()">
+        <label style="font-size:11px; display:block; text-align:left;">👁️‍🗨️ Reatividade Pupilar (PUPILA):</label>
+        <select id="g-p">
             <option value="0">0 - Ambas reagem à luz</option>
-            <option value="-1">-1 - Apenas uma reage</option>
-            <option value="-2">-2 - Nenhuma reage (Arreativas)</option>
+            <option value="-1">-1 - Apenas uma reage (Anisocoria)</option>
+            <option value="-2">-2 - Nenhuma reage (Midríase Bilateral)</option>
         </select>
 
-        <div class="info-card" style="border-left-color: var(--accent-yellow); margin-top:10px;">
-            <h3 style="color:var(--accent-yellow);">RESULTADO FINAL:</h3>
-            <div id="glasgow-score" style="font-size:20px; font-weight:900;"> Pontuação: 15 (Normal)</div>
-            <div id="glasgow-desc" style="font-size:11px; margin-top:4px; opacity:0.9;">TCE Leve ou Ausente</div>
-        </div>
-
+        <button class="btn-yellow" onclick="evaluateGlasgowCase()">CHECK / CONFIRMAR GLASGOW</button>
         <button class="btn-back" onclick="changeScreen('screen-menu')">↩ Voltar ao Menu</button>
     </div>
 
@@ -209,24 +209,60 @@ function changeScreen(id) {
     document.getElementById(id).classList.add('active-screen');
     if(id === 'screen-casos') loadCase();
     if(id === 'screen-xabcde') loadXabcdeQuestion();
-    if(id === 'screen-glasgow') calcGlasgow();
+    if(id === 'screen-glasgow') loadGlasgowScenario();
 }
 
-// LOGICA ESCALA DE GLASGOW
-function calcGlasgow() {
-    const ao = parseInt(document.getElementById("g-ao").value);
-    const rv = parseInt(document.getElementById("g-rv").value);
-    const rm = parseInt(document.getElementById("g-rm").value);
-    const p = parseInt(document.getElementById("g-p").value);
+// LOGICA CASOS PRATICOS DE GLASGOW (ECG-P)
+let currentGCase = 0;
+const glasgowScenarios = [
+    {
+        title: "Cenário 1: Queda de Andaime (3m)",
+        desc: "Vítima deitada. Só abre os olhos ao receber pressão no trapézio (dor). Emite apenas gemidos e sons incompreensíveis. Ao estímulo doloroso, localiza a dor e tenta afastar a mão do socorrista. Pupilas: ambas reagem normalmente à luz.",
+        target: { ao: 2, rv: 2, rm: 5, p: 0 }, // Total = 9
+        explain: "AO=2 (À dor), RV=2 (Gemidos), RM=5 (Localiza dor), P=0 -> Glasgow 9 (TCE Moderado)"
+    },
+    {
+        title: "Cenário 2: Colisão Moto x Auto",
+        desc: "Motociclista sem capacete. Olhos abertos espontaneamente, conversando e orientado no tempo/espaço. Obedece prontamente quando pedido para apertar a mão do socorrista. Pupilas: fotorreativas e iguais.",
+        target: { ao: 4, rv: 5, rm: 6, p: 0 }, // Total = 15
+        explain: "AO=4 (Espontânea), RV=5 (Orientado), RM=6 (Obedece), P=0 -> Glasgow 15 (Normal)"
+    },
+    {
+        title: "Cenário 3: Atropelamento Grave",
+        desc: "Vítima inconsciente na pista. Olhos fechados mesmo com dor intensa (sem resposta). Sem emissão de nenhum som. Ao estímulo doloroso, estende os braços rigidamente ao lado do corpo (descerebração). Pupila direita dilatada e sem reação à luz.",
+        target: { ao: 1, rv: 1, rm: 2, p: -1 }, // Total = 3 - 1 = 2
+        explain: "AO=1, RV=1, RM=2 (Extensão/Descerebração), P=-1 (Uma pupila arreativa) -> Glasgow 2 (TCE Grave)"
+    },
+    {
+        title: "Cenário 4: Agressão Física com Paulada",
+        desc: "Vítima no chão. Abre os olhos quando o socorrista chama alto ('Senhor!'). Responde às perguntas mas está confuso sobre o que aconteceu. Dobra o braço rápido afastando da dor. Pupilas reagem bem.",
+        target: { ao: 3, rv: 4, rm: 4, p: 0 }, // Total = 11
+        explain: "AO=3 (Ao som), RV=4 (Confuso), RM=4 (Retirada/Flexão normal), P=0 -> Glasgow 11 (TCE Moderado)"
+    }
+];
 
-    const total = ao + rv + rm + p;
-    let desc = "Neurologicamente Íntegro / Normal";
-    if(total <= 8) desc = "🚨 TCE GRAVE (Necessita de Vias Aéreas Avançadas / Intubação)";
-    else if(total >= 9 && total <= 12) desc = "⚠️ TCE MODERADO (Monitorar continuamente)";
-    else if(total >= 13 && total < 15) desc = "🟢 TCE LEVE (Observação neurológica)";
+function loadGlasgowScenario() {
+    if(currentGCase >= glasgowScenarios.length) currentGCase = 0;
+    const c = glasgowScenarios[currentGCase];
+    document.getElementById("g-case-title").innerHTML = `${c.title} (${currentGCase + 1}/${glasgowScenarios.length})`;
+    document.getElementById("g-case-desc").innerHTML = c.desc;
+}
 
-    document.getElementById("glasgow-score").innerHTML = `Pontuação: ${total} ${p < 0 ? '('+p+' Pupila)' : ''}`;
-    document.getElementById("glasgow-desc").innerHTML = desc;
+function evaluateGlasgowCase() {
+    const c = glasgowScenarios[currentGCase];
+    const userAO = parseInt(document.getElementById("g-ao").value);
+    const userRV = parseInt(document.getElementById("g-rv").value);
+    const userRM = parseInt(document.getElementById("g-rm").value);
+    const userP = parseInt(document.getElementById("g-p").value);
+
+    if(userAO === c.target.ao && userRV === c.target.rv && userRM === c.target.rm && userP === c.target.p) {
+        alert("🟢 EXCELENTE, SOCORRISTA!\nSua avaliação de Glasgow está 100% CORRETA!\n\n" + c.explain);
+        currentGCase++;
+        loadGlasgowScenario();
+    } else {
+        const correctTotal = c.target.ao + c.target.rv + c.target.rm + c.target.p;
+        alert(`🔴 ATENÇÃO! AVALIAÇÃO INCORRETA.\n\nSua resposta não bateu com o quadro clínico.\n\n` + c.explain + `\nTente novamente!`);
+    }
 }
 
 // LOGICA CRONOMETRO AFERICAO
@@ -305,18 +341,13 @@ function loadXabcdeQuestion() {
 }
 
 // CASOS CLINICOS
-let currentCaseIndex = 0;
-const casesDatabase = [
-    {
+function loadCase() {
+    const c = {
         name: "Paciente: Homem, 35 anos", desc: "Queixa de palpitação e ansiedade no trabalho.",
         pa: "120x80 mmHg", fc: "125 bpm", fr: "16 mrpm", spo2: "98%", temp: "36.6 °C", gli: "88 mg/dL",
         question: "Como você classifica a Frequência Cardíaca (FC) de 125 bpm?",
         options: [{ text: "Taquicardia", correct: true }, { text: "Normocardia", correct: false }]
-    }
-];
-
-function loadCase() {
-    const c = casesDatabase[0];
+    };
     document.getElementById("patient-name").innerHTML = c.name;
     document.getElementById("patient-desc").innerHTML = c.desc;
     document.getElementById("val-pa").innerHTML = c.pa;
