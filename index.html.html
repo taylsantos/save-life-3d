@@ -98,7 +98,7 @@ button:active { transform: scale(0.97); background: rgba(0, 240, 255, 0.25); }
 .ecg-wave { width: 100%; height: 2px; background: var(--accent-green); box-shadow: 0 0 8px var(--accent-green); }
 .ecg-flat { background: var(--accent-red); box-shadow: 0 0 8px var(--accent-red); }
 
-/* VIEWPORT 2D DO PACIENTE */
+/* VIEWPORT DO PACIENTE 2D */
 .viewport-2d {
     position: relative; width: 100%; height: 160px; background: #0a111a;
     border-radius: 10px; border: 1.5px solid #1d2d3e; overflow: hidden; margin-bottom: 6px;
@@ -130,6 +130,9 @@ button:active { transform: scale(0.97); background: rgba(0, 240, 255, 0.25); }
 /* 🫀 DIAGRAMAS DE ANATOMIA EM SVG */
 .anatomy-card { background: rgba(0,0,0,0.4); border: 1px solid var(--accent-blue); border-radius: 8px; padding: 8px; margin-bottom: 6px; text-align: center; }
 .svg-container { width: 100%; max-height: 140px; display: flex; justify-content: center; align-items: center; margin: 4px 0; }
+
+.code-section { background: rgba(0,0,0,0.3); padding: 8px; border-radius: 6px; margin-bottom: 6px; border-left: 3px solid var(--accent-blue); font-size: 10px; text-align: left; }
+.code-section h3 { font-size: 11px; color: var(--accent-blue); margin-bottom: 4px; text-transform: uppercase; }
 </style>
 </head>
 <body>
@@ -138,7 +141,7 @@ button:active { transform: scale(0.97); background: rgba(0, 240, 255, 0.25); }
 
     <!-- BARRA DE STATUS DO TABLET -->
     <div class="tablet-statusbar">
-        <span>📟 TABLET APH v8.0</span>
+        <span>📟 TABLET APH v8.5</span>
         <span class="status-badge badge-gps" id="top-loc">GPS: AGUARDANDO</span>
         <span class="status-badge badge-time" id="top-timer">00:00</span>
         <span>🔋 98%</span>
@@ -149,7 +152,7 @@ button:active { transform: scale(0.97); background: rgba(0, 240, 255, 0.25); }
         <div style="text-align:center; margin: 6px 0;">
             <span style="font-size: 32px;">🚑</span>
             <h1>PRANCHETA TÁTICA SOCORRISTA</h1>
-            <p>Selecione a Ocorrência ou Módulo de Anatomia</p>
+            <p>Selecione a Ocorrência ou Módulo de Estudos</p>
         </div>
 
         <h2>OCORRÊNCIAS DE CAMPO:</h2>
@@ -161,7 +164,7 @@ button:active { transform: scale(0.97); background: rgba(0, 240, 255, 0.25); }
 
         <h2 style="margin-top:8px;">CENTRO DE ESTUDOS TÁTICOS:</h2>
         <button class="btn-yellow" onclick="changeScreen('screen-anatomy')">🫀 ANATOMIA & FISIOLOGIA APLICADA</button>
-        <button onclick="changeScreen('screen-radio')">📻 TREINAMENTO DE CÓDIGO Q & RÁDIO</button>
+        <button onclick="changeScreen('screen-radio')">📻 CÓDIGOS DE COMUNICAÇÃO & RÁDIO</button>
 
         <p style="margin-top: auto; text-align: center; font-size: 9px; opacity: 0.4;">Sistema de Suporte APH Pro • 2026</p>
     </div>
@@ -289,20 +292,46 @@ button:active { transform: scale(0.97); background: rgba(0, 240, 255, 0.25); }
         <button class="btn-back" onclick="changeScreen('screen-menu')">↩ Voltar ao Menu</button>
     </div>
 
-    <!-- TELA 4: CÓDIGO Q -->
+    <!-- TELA 4: CÓDIGOS DE COMUNICAÇÃO EXPANDIDOS -->
     <div id="screen-radio" class="screen">
-        <h1>📻 TREINAMENTO DE CÓDIGO Q</h1>
-        <div style="font-size:11px; text-align:left; background:rgba(0,0,0,0.4); padding:10px; border-radius:8px;">
-            <b>QTH:</b> Localização da Ocorrência<br>
-            <b>QSL:</b> Entendido / Compreendido<br>
-            <b>QTA:</b> Cancelar Missão / Abortar<br>
-            <b>QRT:</b> Encerrar Transmissões<br>
-            <b>QRV:</b> À disposição / Pronto<br><br>
-            <b>Código Verde:</b> Estável / Leve<br>
-            <b>Código Amarelo:</b> Urgente / Moderado<br>
-            <b>Código Vermelho:</b> Gravíssimo (Risco Morte)<br>
-            <b>Código Preto:</b> Óbito Confirmado
+        <h1>📻 CÓDIGOS DE COMUNICAÇÃO APH</h1>
+        <p>Guia completo de rádio de emergência e despacho:</p>
+
+        <!-- CÓDIGO Q -->
+        <div class="code-section">
+            <h3>📡 CÓDIGO Q (RADIOFONIA)</h3>
+            <b>QAP:</b> Na escuta / Atento na frequência<br>
+            <b>QTH:</b> Localização / Endereço da ocorrência<br>
+            <b>QSL:</b> Entendido / Compreendido / Ciente<br>
+            <b>QTA:</b> Cancelar missão / Abortar ação<br>
+            <b>QRT:</b> Encerrar transmissões / Fora do ar<br>
+            <b>QRV:</b> À disposição / Pronto para atendimento<br>
+            <b>QRA:</b> Nome do socorrista ou operador<br>
+            <b>QTR:</b> Horário exato<br>
+            <b>QRM:</b> Interferência ou ruído na transmissão<br>
+            <b>QSY:</b> Mudar de frequência / canal de rádio<br>
+            <b>QSO:</b> Contato direto entre viaturas
         </div>
+
+        <!-- CÓDIGOS OPERACIONAIS -->
+        <div class="code-section" style="border-color: var(--accent-yellow);">
+            <h3 style="color: var(--accent-yellow);">🚨 CÓDIGOS OPERACIONAIS DE VIATURA</h3>
+            <b>Código 1:</b> Deslocamento normal (Sem prioridade)<br>
+            <b>Código 3:</b> Deslocamento de emergência (Sirene/Giroflex)<br>
+            <b>Código 4:</b> Situação sob controle na cena<br>
+            <b>Código 5:</b> Deslocamento da viatura ao hospital<br>
+            <b>Código 0:</b> Apoio policial emergencial (Risco à equipe)
+        </div>
+
+        <!-- TRIAGEM DE GRAVIDADE -->
+        <div class="code-section" style="border-color: var(--accent-red);">
+            <h3 style="color: var(--accent-red);">🔴 CÓDIGOS DE GRAVIDADE / TRIAGEM</h3>
+            <span style="color:var(--accent-green);">● <b>Código Verde:</b></span> Vítima leve / Estável<br>
+            <span style="color:var(--accent-yellow);">● <b>Código Amarelo:</b></span> Urgente / Moderado (Risco potencial)<br>
+            <span style="color:var(--accent-red);">● <b>Código Vermelho:</b></span> Gravíssimo (Risco iminente de morte)<br>
+            <span style="color:#aaa;">● <b>Código Preto:</b></span> Óbito confirmado no local
+        </div>
+
         <button class="btn-back" onclick="changeScreen('screen-menu')">↩ Voltar ao Menu</button>
     </div>
 
