@@ -3,65 +3,84 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SOS HERO - Academia do Socorrista Pro</title>
+<title>SOS HERO - Atendimento de Rua 2D</title>
 
 <style>
 :root {
-    --bg-color: #0d1b2a;
-    --card-bg: #1b263b;
-    --accent-blue: #00b4d8;
-    --accent-green: #06d6a0;
-    --accent-red: #ef476f;
+    --bg-color: #0b131e;
+    --card-bg: #162232;
+    --accent-blue: #00f0ff;
+    --accent-green: #00e676;
+    --accent-red: #ff1744;
     --accent-yellow: #ffd166;
-    --text-color: #ffffff;
 }
 
 body {
-    margin: 0; font-family: 'Segoe UI', Roboto, sans-serif;
-    background: var(--bg-color); color: var(--text-color);
-    display: flex; justify-content: center; align-items: center; min-height: 100vh;
+    margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--bg-color); color: #fff;
+    display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow: hidden;
 }
 
 .app-container {
-    width: 92%; max-width: 480px; height: 95vh; background: var(--card-bg);
-    border-radius: 20px; padding: 18px; box-sizing: border-box;
-    display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    border: 1px solid rgba(0, 180, 216, 0.3); overflow: hidden;
+    width: 92%; max-width: 450px; height: 95vh; background: var(--card-bg);
+    border-radius: 20px; padding: 15px; box-sizing: border-box;
+    display: flex; flex-direction: column; border: 1px solid rgba(0, 240, 255, 0.3);
+    box-shadow: 0 0 25px rgba(0, 240, 255, 0.15); position: relative;
 }
 
-h1 { font-size: 17px; color: var(--accent-blue); margin: 0 0 5px 0; text-transform: uppercase; }
-p { font-size: 12px; opacity: 0.8; margin-bottom: 10px; }
-
-.screen { display: none; flex-direction: column; height: 100%; overflow-y: auto; }
+.screen { display: none; flex-direction: column; height: 100%; }
 .active-screen { display: flex; }
 
+h1 { font-size: 18px; color: var(--accent-blue); margin: 0 0 5px 0; text-transform: uppercase; text-shadow: 0 0 8px rgba(0,240,255,0.4); }
+p { font-size: 11px; opacity: 0.8; margin-bottom: 8px; }
+
 button {
-    background: var(--accent-blue); color: #000; border: none; padding: 11px;
-    border-radius: 12px; font-weight: bold; font-size: 12px; margin: 4px 0;
-    cursor: pointer; transition: transform 0.2s, background 0.2s;
+    background: rgba(0, 240, 255, 0.15); color: #fff; border: 1px solid var(--accent-blue);
+    padding: 10px; border-radius: 10px; font-weight: bold; font-size: 12px; margin: 4px 0;
+    cursor: pointer; text-transform: uppercase; transition: all 0.2s;
 }
-button:active { transform: scale(0.97); }
-.btn-green { background: var(--accent-green); }
-.btn-yellow { background: var(--accent-yellow); color: #000; }
-.btn-red { background: var(--accent-red); color: white; }
-.btn-back { background: rgba(255,255,255,0.1); color: #fff; margin-top: auto; padding: 10px; }
+button:active { transform: scale(0.96); background: rgba(0, 240, 255, 0.3); }
+.btn-red { background: rgba(255, 23, 68, 0.2); border-color: var(--accent-red); color: #ff80ab; }
+.btn-green { background: rgba(0, 230, 118, 0.2); border-color: var(--accent-green); color: var(--accent-green); }
+.btn-back { background: rgba(255,255,255,0.05); color: #aaa; margin-top: auto; border-color: #555; }
 
-.info-card {
-    background: rgba(0, 0, 0, 0.2); border-left: 4px solid var(--accent-blue);
-    padding: 10px; margin: 5px 0; border-radius: 6px; text-align: left; font-size: 12px;
+/* 🛣️ CENÁRIO DA RUA 2D */
+.street-canvas {
+    position: relative; width: 100%; height: 230px; background: #1c2526;
+    border-radius: 15px; border: 2px solid #334455; overflow: hidden; margin-bottom: 10px;
 }
-.info-card h3 { margin: 0 0 4px 0; color: var(--accent-blue); font-size: 13px; }
 
-/* MONITOR CARDÍACO */
-.cardiac-monitor {
-    background: #020b14; border: 2px solid var(--accent-green); border-radius: 10px;
-    padding: 10px; margin-bottom: 10px; text-align: left; box-shadow: inset 0 0 10px rgba(6, 214, 160, 0.2);
+/* Linhas do asfalto */
+.road-line {
+    position: absolute; top: 50%; left: 0; right: 0; height: 4px;
+    background: repeating-linear-gradient(90deg, #ffd166 0, #ffd166 20px, transparent 20px, transparent 40px);
 }
-.monitor-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 5px; }
-.monitor-val { font-family: monospace; font-size: 16px; font-weight: bold; color: var(--accent-green); }
-.monitor-val span { font-size: 10px; color: #888; display: block; }
 
-.quiz-box { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 12px; margin-bottom: 8px; text-align: left; }
+/* BONEQUINHO (VÍTIMA) DEITADO */
+.dummy-body {
+    position: absolute; left: 50%; top: 55%; transform: translate(-50%, -50%);
+    width: 140px; height: 45px; cursor: pointer;
+}
+.dummy-head { position: absolute; left: 0; top: 12px; width: 22px; height: 22px; background: #ffd1a4; border-radius: 50%; border: 2px solid #000; }
+.dummy-torso { position: absolute; left: 24px; top: 10px; width: 50px; height: 26px; background: #1e88e5; border-radius: 6px; border: 2px solid #000; }
+.dummy-legs { position: absolute; left: 76px; top: 13px; width: 55px; height: 20px; background: #37474f; border-radius: 4px; border: 2px solid #000; }
+
+/* Lesão / Sangramento piscante */
+.wound-mark {
+    position: absolute; width: 14px; height: 14px; background: #ff1744; border-radius: 50%;
+    box-shadow: 0 0 10px #ff1744; animation: pulseWound 0.8s infinite alternate; display: none;
+}
+@keyframes pulseWound { from { transform: scale(0.8); opacity: 0.6; } to { transform: scale(1.3); opacity: 1; } }
+
+/* FERRAMENTAS DO SOCORRISTA */
+.tool-bar { display: flex; justify-content: space-around; gap: 5px; margin-bottom: 8px; }
+.tool-btn { flex: 1; padding: 8px 4px; font-size: 10px; background: rgba(0,0,0,0.4); border: 1px solid var(--accent-blue); border-radius: 8px; }
+
+/* MONITOR DE CAMPO */
+.hud-monitor {
+    background: #000; border: 1px solid var(--accent-green); border-radius: 8px; padding: 6px 10px;
+    display: flex; justify-content: space-between; font-family: monospace; font-size: 11px; color: var(--accent-green); margin-bottom: 8px;
+}
 </style>
 </head>
 <body>
@@ -70,260 +89,168 @@ button:active { transform: scale(0.97); }
 
     <!-- MENU PRINCIPAL -->
     <div id="screen-menu" class="screen active-screen">
-        <span style="font-size: 32px;">🚑</span>
-        <h1>ACADEMIA DO SOCORRISTA PRO</h1>
-        <p>Módulos Práticos de APH e Sinais Vitais</p>
+        <span style="font-size: 35px;">🚑</span>
+        <h1>SOS HERO 2D - ATENDIMENTO DE RUA</h1>
+        <p>Atenda ocorrências reais no asfalto com o boneco interativo</p>
 
-        <button class="btn-red" onclick="changeScreen('screen-pcr')">🫀 SIMULADOR DE PCR & DEA (NÍVEIS)</button>
-        <button class="btn-red" onclick="changeScreen('screen-hemo')">🩸 SIMULADOR DE HEMORRAGIAS (MÉTODOS)</button>
-        <button class="btn-green" onclick="changeScreen('screen-checklist')">📑 GUIA: PROTOCOLO DE AVALIAÇÃO APH</button>
-        <button class="btn-yellow" onclick="changeScreen('screen-glasgow')">🧠 CASOS PRÁTICOS: GLASGOW (ECG-P)</button>
-        <button onclick="changeScreen('screen-xabcde')">📋 CASOS PRÁTICOS: XABCDE & SAMPLE</button>
+        <button class="btn-red" onclick="startStreetGame('hemo')">🩸 OCORRÊNCIAS DE HEMORRAGIA NA RUA</button>
+        <button class="btn-green" onclick="startStreetGame('pcr')">🫀 OCORRÊNCIAS DE PCR NA RUA</button>
+        <button onclick="alert('Selecione uma das ocorrências no menu!')">📋 GUIA DE CAMPO APH</button>
 
-        <p style="margin-top: auto; font-size: 10px; opacity: 0.4;">Estudo para APH / Socorrista v4.0</p>
+        <p style="margin-top: auto; font-size: 10px; opacity: 0.4;">Simulador de Rua v5.0</p>
     </div>
 
-    <!-- MÓDULO: SIMULADOR DE PCR -->
-    <div id="screen-pcr" class="screen">
-        <h1>🫀 REVERSÃO DE PCR & DEA</h1>
+    <!-- TELA DO JOGO NA RUA (UNIFICADA) -->
+    <div id="screen-street" class="screen">
+        <h1 id="street-title">OCORRÊNCIA DE RUA</h1>
+        <p id="street-subtitle">Identifique o problema e aja no boneco</p>
 
-        <!-- MONITOR CARDÍACO HOLOGRÁFICO -->
-        <div class="cardiac-monitor">
-            <div style="font-size:11px; font-weight:bold; color:var(--accent-yellow);" id="pcr-level-title">NÍVEL 1: SELECIONE UM CASO</div>
-            <div class="monitor-grid">
-                <div class="monitor-val"><span id="lbl-ritmo">RITMO:</span><div id="mon-ritmo" style="color:var(--accent-red);">SEM PULSO</div></div>
-                <div class="monitor-val"><span id="lbl-fc">FC (BPM):</span><div id="mon-fc">0</div></div>
-                <div class="monitor-val"><span id="lbl-pa">PA (mmHg):</span><div id="mon-pa">0 x 0</div></div>
-                <div class="monitor-val"><span id="lbl-spo2">SpO2 (%):</span><div id="mon-spo2">0%</div></div>
+        <!-- MONITOR DE CAMPO -->
+        <div class="hud-monitor">
+            <span>RITMO: <b id="hud-ritmo" style="color:var(--accent-green);">SINUSAL</b></span>
+            <span>FC: <b id="hud-fc">80</b> BPM</span>
+            <span>SANGRAMENTO: <b id="hud-bleed" style="color:var(--accent-green);">0%</b></span>
+        </div>
+
+        <!-- CENÁRIO DA RUA COM O BONEQUINHO -->
+        <div class="street-canvas" onclick="handleStreetClick()">
+            <div class="road-line"></div>
+            
+            <!-- VÍTIMA 2D DEITADA -->
+            <div class="dummy-body">
+                <div class="dummy-head"></div>
+                <div class="dummy-torso" id="dummy-chest"></div>
+                <div class="dummy-legs"></div>
+                
+                <!-- PONTO DE FERIMENTO NO BONECO -->
+                <div class="wound-mark" id="wound-spot"></div>
             </div>
         </div>
 
-        <div class="quiz-box" style="border-left: 4px solid var(--accent-red);">
-            <b id="pcr-scen-title">Caso Clínico PCR</b>
-            <p id="pcr-scen-desc" style="font-size: 12px; margin: 6px 0; line-height: 1.4;">Carregando...</p>
+        <!-- BARRA DE FERRAMENTAS DO SOCORRISTA -->
+        <div class="tool-bar" id="hemo-tools" style="display:none;">
+            <button class="tool-btn" onclick="selectTool('torniquete')">🩸 TORNIQUETE</button>
+            <button class="tool-btn" onclick="selectTool('gaze')">🩹 GAZE (JUNÇÃO)</button>
+            <button class="tool-btn" onclick="selectTool('pressao')">✋ PRESSÃO DIRETA</button>
         </div>
 
-        <p style="font-weight: bold; margin: 5px 0; text-align:left; font-size:12px;" id="pcr-question">Qual a conduta imediata?</p>
-        <div id="pcr-options"></div>
+        <div id="street-feedback" style="font-size:12px; font-weight:bold; color:var(--accent-yellow); margin: 4px 0;">Selecione a ação...</div>
 
-        <button class="btn-back" onclick="changeScreen('screen-menu')">↩ Voltar ao Menu</button>
-    </div>
-
-    <!-- MÓDULO: SIMULADOR DE CONTENÇÃO DE HEMORRAGIAS -->
-    <div id="screen-hemo" class="screen">
-        <h1>🩸 CONTENÇÃO DE HEMORRAGIAS</h1>
-
-        <div class="quiz-box" style="border-left: 4px solid var(--accent-red);">
-            <b id="hemo-scen-title">Caso de Trauma Hemorrágico</b>
-            <p id="hemo-scen-desc" style="font-size: 12px; margin: 6px 0; line-height: 1.4;">Carregando...</p>
-        </div>
-
-        <p style="font-weight: bold; margin: 5px 0; text-align:left; font-size:12px;" id="hemo-question">Qual a técnica de contenção indicada para este local?</p>
-        <div id="hemo-options"></div>
-
-        <button class="btn-back" onclick="changeScreen('screen-menu')">↩ Voltar ao Menu</button>
-    </div>
-
-    <!-- FICHA AVALIAÇÃO APH -->
-    <div id="screen-checklist" class="screen">
-        <h1>📑 AVALIAÇÃO DA VÍTIMA (APH)</h1>
-        <div class="info-card" style="border-left-color: var(--accent-yellow);">
-            <h3 style="color:var(--accent-yellow);">1. AVALIAÇÃO DA CENA</h3>
-            • <b>Segurança da Cena:</b> O local é seguro para você e sua equipe?<br>
-            • <b>Mecanismo do Trauma:</b> O que aconteceu?<br>
-            • <b>EPIs & Apoio:</b> Usar luvas/óculos e chamar apoio se necessário.
-        </div>
-        <div class="info-card" style="border-left-color: var(--accent-red);">
-            <h3 style="color:var(--accent-red);">2. EXAME PRIMÁRIO (XABCDE)</h3>
-            • <b>X (Hemorragia Exsangue):</b> Estancar sangramentos arteriais graves em jato.<br>
-            • <b>A (Vias Aéreas + Cervical):</b> Permeabilidade de VA + Controle cervical.<br>
-            • <b>B (Boa Ventilação):</b> Expansão do tórax, frequência respiratória, oxigênio.<br>
-            • <b>C (Circulação):</b> Pulso, cor da pele, temperatura, tempo de enchimento capilar.<br>
-            • <b>D (Incapacidade Neurológica):</b> Escala de Glasgow (ECG-P) + Pupilas.<br>
-            • <b>E (Exposição + Hipotermia):</b> Expor lesões com cuidado e aquecer o paciente.
-        </div>
-        <button class="btn-back" onclick="changeScreen('screen-menu')">↩ Voltar ao Menu</button>
-    </div>
-
-    <!-- CASOS PRÁTICOS GLASGOW -->
-    <div id="screen-glasgow" class="screen">
-        <h1>🧠 CASO DE TRAUMA (GLASGOW)</h1>
-        <div class="quiz-box" style="border-left: 4px solid var(--accent-yellow);">
-            <b id="g-case-title" style="color:var(--accent-yellow); font-size:13px;">Cenário 1/4</b>
-            <p id="g-case-desc" style="font-size: 12px; margin: 6px 0; line-height: 1.4;">Carregando...</p>
-        </div>
-        <button class="btn-back" onclick="changeScreen('screen-menu')">↩ Voltar ao Menu</button>
-    </div>
-
-    <!-- CASOS PRÁTICOS XABCDE -->
-    <div id="screen-xabcde" class="screen">
-        <h1>📋 CASOS PRÁTICOS XABCDE & SAMPLE</h1>
-        <div class="quiz-box" style="border-left: 4px solid var(--accent-blue);">
-            <b id="x-case-title" style="color:var(--accent-blue); font-size:13px;">Ocorrência 1/4</b>
-            <p id="x-case-desc" style="font-size: 12px; margin: 6px 0; line-height: 1.4;">Carregando...</p>
-        </div>
-        <button class="btn-back" onclick="changeScreen('screen-menu')">↩ Voltar ao Menu</button>
+        <button class="btn-back" onclick="changeScreen('screen-menu')">↩ Encerrar Ocorrência</button>
     </div>
 
 </div>
 
 <script>
+let currentMode = 'hemo';
+let selectedTool = null;
+let bleedLevel = 100;
+let compressionsCount = 0;
+let currentScenarioIndex = 0;
+
+const streetScenarios = [
+    { title: "Atropelamento por Carro", desc: "Vítima atingida na perna. Sangramento arterial jorrando na coxa!", woundPos: { left: '85px', top: '15px' }, correctTool: 'torniquete', mode: 'hemo' },
+    { title: "Queda de Moto na Rodovia", desc: "Corte profundo na virilha (área de junção). Sangramento volumoso continuo!", woundPos: { left: '68px', top: '15px' }, correctTool: 'gaze', mode: 'hemo' },
+    { title: "Queda de Bicicleta no Asfalto", desc: "Corte venoso continuo no antebraço sem atingir artéria.", woundPos: { left: '35px', top: '5px' }, correctTool: 'pressao', mode: 'hemo' }
+];
+
 function changeScreen(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen'));
     document.getElementById(id).classList.add('active-screen');
-    if(id === 'screen-pcr') loadPcrScenario();
-    if(id === 'screen-hemo') loadHemoScenario();
 }
 
-// 🫀 LÓGICA DO SIMULADOR DE PCR (NÍVEIS + MONITOR)
-let currentPcrIndex = 0;
-const pcrScenarios = [
-    {
-        level: "NÍVEL 1: LACTANTE (BEBÊ < 1 ANO)",
-        ritmo: "FIBRILAÇÃO VENTRICULAR", fc: "0", pa: "0 x 0", spo2: "0%",
-        title: "Bebê de 7 meses encontrado irresponsivo no berço",
-        desc: "Você checa a irresponsividade e o bebê não responde. Não há pulso braquial detectável em 10 segundos e não há respiração (apneia). Suporte acionado.",
-        q: "Qual a técnica correta de compressão e conduta para este lactante?",
-        options: [
-            { t: "Compressão com 2 dedos (ou 2 polegares abraçando o tórax) a 100-120/min + DEA com pá pediátrica", r: true },
-            { t: "Compressão com as duas mãos sobrepostas no centro do peito", r: false },
-            { t: "Dar socos no peito e aguardar o SAMU sem realizar compressões", r: false }
-        ],
-        successRitmo: "SINUSAL", successFc: "125", successPa: "85 x 55", successSpo2: "97%",
-        explain: "No lactante, a compressão é feita com 2 dedos ou 2 polegares abraçando o tórax (se houver 2 socorristas), afundando cerca de 4cm (1/3 do diâmetro anteroposterior)."
-    },
-    {
-        level: "NÍVEL 2: ADULTO (RITMO CHOCÁVEL - FV/TVSP)",
-        ritmo: "FIBRILAÇÃO VENTRICULAR (FV)", fc: "210 (Caótico)", pa: "0 x 0", spo2: "0%",
-        title: "Homem de 50 anos desmaia na academia",
-        desc: "Sem pulso carotídeo e sem respiração (apneia). Você inicia a RCP e o DEA chega ao local.",
-        q: "O DEA analisa o ritmo e emite a mensagem: 'CHOQUE RECOMENDADO'. Qual a sequência exata de ação?",
-        options: [
-            { t: "Garantir que NINGUÉM toque na vítima -> Pressionar botão de Choque -> Retomar RCP imediatamente por 2 min", r: true },
-            { t: "Checar o pulso antes de disparar o choque enquanto segura o braço da vítima", r: false },
-            { t: "Desligar o DEA e fazer apenas ventilações de resgate", r: false }
-        ],
-        successRitmo: "SINUSAL", successFc: "88", successPa: "110 x 70", successSpo2: "95%",
-        explain: "Em ritmos chocáveis (FV/TV sem pulso), o choque limpa a atividade elétrica caótica. Afastar todos da vítima antes do disparo é segurança vital. A RCP deve ser retomada imediatamente após o choque."
-    },
-    {
-        level: "NÍVEL 3: ADULTO (RITMO NÃO CHOCÁVEL - ASSISTOLIA)",
-        ritmo: "ASSISTOLIA (LINHA RETA)", fc: "0", pa: "0 x 0", spo2: "0%",
-        title: "Vítima encontrada desacordada em parada prolongada",
-        desc: "O monitor mostra uma linha reta (Assistolia). O DEA analisa e emite a mensagem: 'CHOQUE NÃO RECOMENDADO'.",
-        q: "Como proceder diante de um ritmo NÃO chocável?",
-        options: [
-            { t: "Manter RCP contínua de alta qualidade (30:2 ou contínua) + Buscar causas reversíveis (5Hs e 5Ps)", r: true },
-            { t: "Forçar o disparo do choque no botão do DEA repetidamente", r: false },
-            { t: "Aguardar 5 minutos sem fazer nada para o DEA reanalisar sozinho", r: false }
-        ],
-        successRitmo: "SINUSAL", successFc: "65", successPa: "95 x 60", successSpo2: "92%",
-        explain: "Assistolia e AEP são ritmos NÃO chocáveis. O tratamento consiste em RCP ininterrupta de alta qualidade e identificação de causas reversíveis (Hipóxia, Hipovolemia, Hipotermia, etc.)."
+function startStreetGame(mode) {
+    currentMode = mode;
+    changeScreen('screen-street');
+
+    if(mode === 'hemo') {
+        document.getElementById("street-title").innerHTML = "ESTANCAR HEMORRAGIA";
+        document.getElementById("hemo-tools").style.display = "flex";
+        loadHemoStreetScenario();
+    } else {
+        document.getElementById("street-title").innerHTML = "REANIMAÇÃO PCR NA RUA";
+        document.getElementById("street-subtitle").innerHTML = "Toque no peito do boneco para comprimir!";
+        document.getElementById("hemo-tools").style.display = "none";
+        document.getElementById("wound-spot").style.display = "none";
+        
+        // Configura monitor para PCR
+        document.getElementById("hud-ritmo").innerHTML = "PARADA (FV)";
+        document.getElementById("hud-ritmo").style.color = "var(--accent-red)";
+        document.getElementById("hud-fc").innerHTML = "0";
+        document.getElementById("hud-bleed").innerHTML = "N/A";
+        document.getElementById("street-feedback").innerHTML = "Toque no PEITO do boneco para fazer RCP!";
+        compressionsCount = 0;
     }
-];
-
-function loadPcrScenario() {
-    if(currentPcrIndex >= pcrScenarios.length) currentPcrIndex = 0;
-    const c = pcrScenarios[currentPcrIndex];
-
-    document.getElementById("pcr-level-title").innerHTML = c.level;
-    document.getElementById("mon-ritmo").innerHTML = c.ritmo;
-    document.getElementById("mon-ritmo").style.color = "var(--accent-red)";
-    document.getElementById("mon-fc").innerHTML = c.fc;
-    document.getElementById("mon-pa").innerHTML = c.pa;
-    document.getElementById("mon-spo2").innerHTML = c.spo2;
-
-    document.getElementById("pcr-scen-title").innerHTML = c.title;
-    document.getElementById("pcr-scen-desc").innerHTML = c.desc;
-    document.getElementById("pcr-question").innerHTML = c.q;
-
-    const optDiv = document.getElementById("pcr-options");
-    optDiv.innerHTML = "";
-    c.options.forEach(o => {
-        const btn = document.createElement("button");
-        btn.innerHTML = o.t;
-        btn.onclick = () => {
-            if(o.r) {
-                // Atualiza monitor para sinais de reversão
-                document.getElementById("mon-ritmo").innerHTML = c.successRitmo;
-                document.getElementById("mon-ritmo").style.color = "var(--accent-green)";
-                document.getElementById("mon-fc").innerHTML = c.successFc;
-                document.getElementById("mon-pa").innerHTML = c.successPa;
-                document.getElementById("mon-spo2").innerHTML = c.successSpo2;
-
-                alert("🟢 PARADA REVERTIDA COM SUCESSO!\n\n" + c.explain);
-                currentPcrIndex++;
-                setTimeout(loadPcrScenario, 1500);
-            } else {
-                alert("🔴 CONDUTA INCORRETA!\nA reanimação falhou. Revise a sequência de RCP/DEA.");
-            }
-        };
-        optDiv.appendChild(btn);
-    });
 }
 
-// 🩸 LÓGICA DO SIMULADOR DE HEMORRAGIAS
-let currentHemoIndex = 0;
-const hemoScenarios = [
-    {
-        title: "Cenário 1: Ferimento por Fratura Exposta na Coxa",
-        desc: "Vítima de acidente de trânsito apresenta sangramento arterial maciço e jorrante na coxa direita (região de membro).",
-        q: "Qual o método de contenção indicado para este sangramento exsangue em membro?",
-        options: [
-            { t: "Aplicar TORNIQUETE de extremidade 5 a 7 cm acima da lesão (sem cobrir articulação)", r: true },
-            { t: "Fazer apenas elevação do membro e aguardar parar sozinho", r: false },
-            { t: "Preencher a ferida com algodão e lavar com água quente", r: false }
-        ],
-        explain: "Em sangramentos arteriais graves nas extremidades (braços/pernas), o TORNIQUETE é a primeira escolha do protocolo XABCDE. Anote o horário de aplicação!"
-    },
-    {
-        title: "Cenário 2: Perfuração por Faca na Virilha (Região Inguinal)",
-        desc: "Vítima de agressão com corte profundo na virilha (área de junção/transição). Sangramento volumoso continuo. O local NÃO permite fixação de torniquete.",
-        q: "Qual a conduta de contenção correta para áreas de junção (virilha/axila/pescoço)?",
-        options: [
-            { t: "Preenchimento de Ferida (Wound Packing) com gaze hemostática + Pressão Direta contínua", r: true },
-            { t: "Colocar um torniquete no abdômen apertando a cintura", r: false },
-            { t: "Passar pomada cicatrizante e cobrir com fita micropore", r: false }
-        ],
-        explain: "Em regiões de junção onde o torniquete não encaixa (virilha, axilas, pescoço), o PREENCHIMENTO DE FERIDA (Wound Packing) até a origem do sangramento com pressão direta firme é o procedimento indicado."
-    },
-    {
-        title: "Cenário 3: Corte Venoso Superficial no Antebraço",
-        desc: "Corte contínuo porém de fluxo lento e cor escura (sangramento venoso) no antebraço sem atingir artéria.",
-        q: "Qual o método de contenção indicado?",
-        options: [
-            { t: "Pressão Direta no local com compressa limpa + Bandagem Compressiva", r: true },
-            { t: "Aperto imediato de torniquete na barra do ombro", r: false },
-            { t: "Cauterizar o local com fogo", r: false }
-        ],
-        explain: "Para sangramentos venosos e capilares sem risco de exsanguição imediata, a Pressão Direta firme seguida de Bandagem Compressiva é suficiente e eficaz."
-    }
-];
+function loadHemoStreetScenario() {
+    const sc = streetScenarios[currentScenarioIndex];
+    document.getElementById("street-title").innerHTML = sc.title;
+    document.getElementById("street-subtitle").innerHTML = sc.desc;
+    
+    // Posiciona a ferida no boneco
+    const wound = document.getElementById("wound-spot");
+    wound.style.display = "block";
+    wound.style.left = sc.woundPos.left;
+    wound.style.top = sc.woundPos.top;
 
-function loadHemoScenario() {
-    if(currentHemoIndex >= hemoScenarios.length) currentHemoIndex = 0;
-    const c = hemoScenarios[currentHemoIndex];
+    bleedLevel = 100;
+    document.getElementById("hud-bleed").innerHTML = "100%";
+    document.getElementById("hud-bleed").style.color = "var(--accent-red)";
+    document.getElementById("street-feedback").innerHTML = "Escolha a ferramenta abaixo e toque no ferimento!";
+}
 
-    document.getElementById("hemo-scen-title").innerHTML = `${c.title} (${currentHemoIndex + 1}/${hemoScenarios.length})`;
-    document.getElementById("hemo-scen-desc").innerHTML = c.desc;
-    document.getElementById("hemo-question").innerHTML = c.q;
+function selectTool(tool) {
+    selectedTool = tool;
+    document.getElementById("street-feedback").innerHTML = `Ferramenta selecionada: ${tool.toUpperCase()}. Agora toque no ferimento!`;
+}
 
-    const optDiv = document.getElementById("hemo-options");
-    optDiv.innerHTML = "";
-    c.options.forEach(o => {
-        const btn = document.createElement("button");
-        btn.innerHTML = o.t;
-        btn.onclick = () => {
-            if(o.r) {
-                alert("🟢 HEMORRAGIA CONTIDA COM SUCESSO!\n\n" + c.explain);
-                currentHemoIndex++;
-                loadHemoScenario();
+function handleStreetClick() {
+    if(currentMode === 'hemo') {
+        const sc = streetScenarios[currentScenarioIndex];
+        if(!selectedTool) {
+            alert("Selecione primeiro uma ferramenta na barra abaixo!");
+            return;
+        }
+
+        if(selectedTool === sc.correctTool) {
+            bleedLevel -= 35;
+            if(bleedLevel <= 0) bleedLevel = 0;
+            
+            document.getElementById("hud-bleed").innerHTML = `${bleedLevel}%`;
+            
+            if(bleedLevel === 0) {
+                document.getElementById("hud-bleed").style.color = "var(--accent-green)";
+                document.getElementById("wound-spot").style.display = "none";
+                alert("🟢 HEMORRAGIA ESTANCADA COM SUCESSO NO BONECO!\nVocê aplicou a técnica correta na rua!");
+                currentScenarioIndex = (currentScenarioIndex + 1) % streetScenarios.length;
+                selectedTool = null;
+                loadHemoStreetScenario();
             } else {
-                alert("🔴 TÉCNICA INCORRETA!\nO sangramento continua ativo. Lembre-se: Torniquete em membros, Preenchimento em junções e Pressão direta em venosos.");
+                document.getElementById("street-feedback").innerHTML = "🟢 Continue aplicando no local até zerar!";
             }
-        };
-        optDiv.appendChild(btn);
-    });
+        } else {
+            alert("🔴 FERRAMENTA INCORRETA PARA ESTA LESÃO!\nLembre-se: Torniquete em membros, Gaze em junções e Pressão em cortes venosos.");
+        }
+    } else if(currentMode === 'pcr') {
+        // Animação de compressão no peito do boneco
+        const chest = document.getElementById("dummy-chest");
+        chest.style.transform = "scaleY(0.8)";
+        setTimeout(() => chest.style.transform = "scaleY(1)", 100);
+
+        compressionsCount++;
+        document.getElementById("hud-fc").innerHTML = `${compressionsCount * 6}`;
+
+        if(compressionsCount >= 20) {
+            document.getElementById("hud-ritmo").innerHTML = "SINUSAL";
+            document.getElementById("hud-ritmo").style.color = "var(--accent-green)";
+            document.getElementById("hud-fc").innerHTML = "75";
+            alert("⚡ PARADA REVERTIDA NA RUA!\nO ritmo do paciente voltou ao normal!");
+            changeScreen('screen-menu');
+        } else {
+            document.getElementById("street-feedback").innerHTML = `Compressões: ${compressionsCount} / 20`;
+        }
+    }
 }
 </script>
 
