@@ -72,6 +72,7 @@ button:active { transform: scale(0.97); background: rgba(0, 240, 255, 0.25); }
 .btn-green { background: rgba(0, 230, 118, 0.15); border-color: var(--accent-green); color: var(--accent-green); }
 .btn-yellow { background: rgba(255, 209, 102, 0.15); border-color: var(--accent-yellow); color: var(--accent-yellow); }
 .btn-orange { background: rgba(255, 145, 0, 0.15); border-color: var(--accent-orange); color: var(--accent-orange); }
+.btn-purple { background: rgba(186, 104, 200, 0.15); border-color: #ba68c8; color: #e1bee7; }
 .btn-back { background: rgba(255,255,255,0.05); color: #aaa; border-color: #444; margin-top: auto; }
 
 /* MONITOR CARDIÁCO */
@@ -127,7 +128,6 @@ button:active { transform: scale(0.97); background: rgba(0, 240, 255, 0.25); }
 .chat-box { display: flex; gap: 4px; margin-bottom: 4px; }
 .chat-input { flex: 1; padding: 6px 8px; border-radius: 6px; border: 1px solid var(--accent-blue); background: #050a10; color: #fff; font-size: 10px; outline: none; }
 
-/* 🫀 DIAGRAMAS DE ANATOMIA EM SVG */
 .anatomy-card { background: rgba(0,0,0,0.4); border: 1px solid var(--accent-blue); border-radius: 8px; padding: 8px; margin-bottom: 6px; text-align: center; }
 .svg-container { width: 100%; max-height: 140px; display: flex; justify-content: center; align-items: center; margin: 4px 0; }
 
@@ -141,7 +141,7 @@ button:active { transform: scale(0.97); background: rgba(0, 240, 255, 0.25); }
 
     <!-- BARRA DE STATUS DO TABLET -->
     <div class="tablet-statusbar">
-        <span>📟 TABLET APH v8.5</span>
+        <span>📟 TABLET APH v9.0</span>
         <span class="status-badge badge-gps" id="top-loc">GPS: AGUARDANDO</span>
         <span class="status-badge badge-time" id="top-timer">00:00</span>
         <span>🔋 98%</span>
@@ -156,6 +156,7 @@ button:active { transform: scale(0.97); background: rgba(0, 240, 255, 0.25); }
         </div>
 
         <h2>OCORRÊNCIAS DE CAMPO:</h2>
+        <button class="btn-purple" onclick="startRandomScenario()">🎲 6. OCORRÊNCIA GERAL (SURPRESA / ALEATÓRIA)</button>
         <button class="btn-red" onclick="startScenario('ovace')">🫁 1. CASO OVACE (ENGASGO GRAVE)</button>
         <button class="btn-orange" onclick="startScenario('hemo_int')">🩸 2. TRAUMA COM HEMORRAGIA INTERNA</button>
         <button class="btn-yellow" onclick="startScenario('hemo_ext')">🩹 3. ATROPELAMENTO (HEMORRAGIA EXTERNA)</button>
@@ -358,7 +359,13 @@ function switchTab(tabId) {
     document.getElementById('tab-' + tabId).classList.add('active');
 }
 
-function startScenario(type) {
+function startRandomScenario() {
+    const scenarios = ['ovace', 'hemo_int', 'hemo_ext', 'pcr_direct', 'overdose'];
+    const chosen = scenarios[Math.floor(Math.random() * scenarios.length)];
+    startScenario(chosen, true);
+}
+
+function startScenario(type, isRandom = false) {
     currentScenario = type;
     secondsElapsed = 0;
     changeScreen('screen-simulation');
@@ -369,30 +376,35 @@ function startScenario(type) {
     document.getElementById("d-wound").style.display = "none";
     document.getElementById("m-ecg").className = "ecg-wave";
     
+    if(isRandom) {
+        document.getElementById("top-loc").innerHTML = "GPS: OCORRÊNCIA SURPRESA";
+        updateFeedback("🚨 CHAMADO DE EMERGÊNCIA SURPRESA! Avalie os sinais vitais e o paciente imediatamente!");
+    }
+
     if(type === 'ovace') {
-        document.getElementById("top-loc").innerHTML = "GPS: RESTAURANTE";
+        if(!isRandom) document.getElementById("top-loc").innerHTML = "GPS: RESTAURANTE";
         pState.fr = 0; pState.spo2 = 82; pState.fc = 115; pState.ovaceBlocked = true;
-        updateFeedback("Vítima com as mãos no pescoço (sinal universal de engasgo)! Apneia total.");
+        if(!isRandom) updateFeedback("Vítima com as mãos no pescoço (sinal universal de engasgo)! Apneia total.");
     } else if(type === 'hemo_int') {
-        document.getElementById("top-loc").innerHTML = "GPS: RODOVIA KM 42";
+        if(!isRandom) document.getElementById("top-loc").innerHTML = "GPS: RODOVIA KM 42";
         pState.bleedRate = 2;
-        updateFeedback("Vítima contundida com dores fortes no abdômen após impacto de cinto!");
+        if(!isRandom) updateFeedback("Vítima contundida com dores fortes no abdômen após impacto de cinto!");
     } else if(type === 'hemo_ext') {
-        document.getElementById("top-loc").innerHTML = "GPS: AV. CENTRAL";
+        if(!isRandom) document.getElementById("top-loc").innerHTML = "GPS: AV. CENTRAL";
         document.getElementById("d-wound").style.display = "block";
         document.getElementById("d-wound").style.left = "85px";
         document.getElementById("d-wound").style.top = "15px";
         pState.bleedRate = 4;
-        updateFeedback("Atropelamento! Sangramento arterial jorrante na coxa do paciente!");
+        if(!isRandom) updateFeedback("Atropelamento! Sangramento arterial jorrante na coxa do paciente!");
     } else if(type === 'pcr_direct') {
-        document.getElementById("top-loc").innerHTML = "GPS: PRAÇA PÚBLICA";
+        if(!isRandom) document.getElementById("top-loc").innerHTML = "GPS: PRAÇA PÚBLICA";
         pState.isPcr = true; pState.fc = 0; pState.paPas = 0; pState.paPad = 0; pState.spo2 = 0; pState.fr = 0;
         document.getElementById("m-ecg").className = "ecg-wave ecg-flat";
-        updateFeedback("Vítima caída, irresponsiva e em apneia! Inicie RCP!");
+        if(!isRandom) updateFeedback("Vítima caída, irresponsiva e em apneia! Inicie RCP!");
     } else if(type === 'overdose') {
-        document.getElementById("top-loc").innerHTML = "GPS: CASA NOTURNA";
+        if(!isRandom) document.getElementById("top-loc").innerHTML = "GPS: CASA NOTURNA";
         pState.fr = 6; pState.spo2 = 85; pState.fc = 50;
-        updateFeedback("Jovem desacordado no banheiro. Respiração bradipneica e lentificada.");
+        if(!isRandom) updateFeedback("Jovem desacordado no banheiro. Respiração bradipneica e lentificada.");
     }
 
     startPhysiologicalLoop();
