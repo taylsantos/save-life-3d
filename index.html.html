@@ -29,15 +29,15 @@ body {
     border: 1px solid rgba(0, 180, 216, 0.3); overflow: hidden;
 }
 
-h1 { font-size: 18px; color: var(--accent-blue); margin: 0 0 5px 0; text-transform: uppercase; }
-p { font-size: 12px; opacity: 0.8; margin-bottom: 12px; }
+h1 { font-size: 17px; color: var(--accent-blue); margin: 0 0 5px 0; text-transform: uppercase; }
+p { font-size: 12px; opacity: 0.8; margin-bottom: 10px; }
 
 .screen { display: none; flex-direction: column; height: 100%; overflow-y: auto; }
 .active-screen { display: flex; }
 
 button {
-    background: var(--accent-blue); color: #000; border: none; padding: 12px;
-    border-radius: 12px; font-weight: bold; font-size: 13px; margin: 5px 0;
+    background: var(--accent-blue); color: #000; border: none; padding: 11px;
+    border-radius: 12px; font-weight: bold; font-size: 12px; margin: 4px 0;
     cursor: pointer; transition: transform 0.2s, background 0.2s;
 }
 button:active { transform: scale(0.97); }
@@ -52,21 +52,16 @@ button:active { transform: scale(0.97); }
 }
 .info-card h3 { margin: 0 0 4px 0; color: var(--accent-blue); font-size: 13px; }
 
-select {
-    width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--accent-blue);
-    background: #0d1b2a; color: white; font-weight: bold; margin-bottom: 8px; outline: none; font-size: 12px;
+/* MONITOR CARDÍACO */
+.cardiac-monitor {
+    background: #020b14; border: 2px solid var(--accent-green); border-radius: 10px;
+    padding: 10px; margin-bottom: 10px; text-align: left; box-shadow: inset 0 0 10px rgba(6, 214, 160, 0.2);
 }
+.monitor-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 5px; }
+.monitor-val { font-family: monospace; font-size: 16px; font-weight: bold; color: var(--accent-green); }
+.monitor-val span { font-size: 10px; color: #888; display: block; }
 
-.tap-zone {
-    background: rgba(0, 180, 216, 0.15); border: 2px dashed var(--accent-blue);
-    border-radius: 16px; padding: 25px; margin: 15px 0; cursor: pointer; user-select: none;
-}
-.tap-zone:active { background: rgba(0, 180, 216, 0.3); }
-
-.quiz-box { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 12px; margin-bottom: 10px; text-align: left; }
-.vitals-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 8px 0; }
-.vital-tag { background: rgba(255,255,255,0.08); padding: 6px; border-radius: 8px; font-size: 11px; }
-.vital-tag b { color: var(--accent-blue); display: block; font-size: 10px; }
+.quiz-box { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 12px; margin-bottom: 8px; text-align: left; }
 </style>
 </head>
 <body>
@@ -75,129 +70,98 @@ select {
 
     <!-- MENU PRINCIPAL -->
     <div id="screen-menu" class="screen active-screen">
-        <span style="font-size: 35px;">🚑</span>
+        <span style="font-size: 32px;">🚑</span>
         <h1>ACADEMIA DO SOCORRISTA PRO</h1>
         <p>Módulos Práticos de APH e Sinais Vitais</p>
 
+        <button class="btn-red" onclick="changeScreen('screen-pcr')">🫀 SIMULADOR DE PCR & DEA (NÍVEIS)</button>
+        <button class="btn-red" onclick="changeScreen('screen-hemo')">🩸 SIMULADOR DE HEMORRAGIAS (MÉTODOS)</button>
+        <button class="btn-green" onclick="changeScreen('screen-checklist')">📑 GUIA: PROTOCOLO DE AVALIAÇÃO APH</button>
         <button class="btn-yellow" onclick="changeScreen('screen-glasgow')">🧠 CASOS PRÁTICOS: GLASGOW (ECG-P)</button>
-        <button onclick="changeScreen('screen-casos')">🚨 PLANTÃO DE TRIAGEM (CASOS)</button>
-        <button class="btn-green" onclick="changeScreen('screen-timer')">⏱️ CRONÔMETRO DE AFERIÇÃO (15s)</button>
-        <button onclick="changeScreen('screen-xabcde')">📋 PROTOCOLO XABCDE & SAMPLE</button>
-        <button class="btn-back" style="margin-top:5px;" onclick="changeScreen('screen-basais')">📊 TABELA DE VALORES BASAIS</button>
+        <button onclick="changeScreen('screen-xabcde')">📋 CASOS PRÁTICOS: XABCDE & SAMPLE</button>
 
-        <p style="margin-top: auto; font-size: 10px; opacity: 0.4;">Estudo para APH / Socorrista v2.5</p>
+        <p style="margin-top: auto; font-size: 10px; opacity: 0.4;">Estudo para APH / Socorrista v4.0</p>
     </div>
 
-    <!-- MÓDULO 1: CASOS PRÁTICOS DE GLASGOW -->
-    <div id="screen-glasgow" class="screen">
-        <h1>🧠 CASO DE TRAUMA (GLASGOW)</h1>
-        
-        <div class="quiz-box" style="border-left: 4px solid var(--accent-yellow);">
-            <b id="g-case-title" style="color:var(--accent-yellow); font-size:13px;">Cenário 1/4</b>
-            <p id="g-case-desc" style="font-size: 12px; margin: 6px 0; line-height: 1.4;">Carregando história clínica...</p>
-        </div>
+    <!-- MÓDULO: SIMULADOR DE PCR -->
+    <div id="screen-pcr" class="screen">
+        <h1>🫀 REVERSÃO DE PCR & DEA</h1>
 
-        <p style="font-size:11px; font-weight:bold; margin:2px 0; text-align:left;">Avalie e selecione os parâmetros do paciente:</p>
-
-        <label style="font-size:11px; display:block; text-align:left;">👁️ Abertura Ocular (AO):</label>
-        <select id="g-ao">
-            <option value="4">4 - Espontânea</option>
-            <option value="3">3 - À ordem verbal</option>
-            <option value="2">2 - À pressão / dor</option>
-            <option value="1">1 - Ausente</option>
-        </select>
-
-        <label style="font-size:11px; display:block; text-align:left;">🗣️ Resposta Verbal (RV):</label>
-        <select id="g-rv">
-            <option value="5">5 - Orientado</option>
-            <option value="4">4 - Confuso</option>
-            <option value="3">3 - Palavras Inapropriadas</option>
-            <option value="2">2 - Sons Incompreensíveis (Gemidos)</option>
-            <option value="1">1 - Ausente</option>
-        </select>
-
-        <label style="font-size:11px; display:block; text-align:left;">💪 Resposta Motora (RM):</label>
-        <select id="g-rm">
-            <option value="6">6 - Obedece a comandos</option>
-            <option value="5">5 - Localiza a dor</option>
-            <option value="4">4 - Flexão normal (retirada)</option>
-            <option value="3">3 - Flexão anormal (decorticação)</option>
-            <option value="2">2 - Extensão (descerebração)</option>
-            <option value="1">1 - Ausente</option>
-        </select>
-
-        <label style="font-size:11px; display:block; text-align:left;">👁️‍🗨️ Reatividade Pupilar (PUPILA):</label>
-        <select id="g-p">
-            <option value="0">0 - Ambas reagem à luz</option>
-            <option value="-1">-1 - Apenas uma reage (Anisocoria)</option>
-            <option value="-2">-2 - Nenhuma reage (Midríase Bilateral)</option>
-        </select>
-
-        <button class="btn-yellow" onclick="evaluateGlasgowCase()">CHECK / CONFIRMAR GLASGOW</button>
-        <button class="btn-back" onclick="changeScreen('screen-menu')">↩ Voltar ao Menu</button>
-    </div>
-
-    <!-- MÓDULO 2: CRONÔMETRO DE AFERIÇÃO -->
-    <div id="screen-timer" class="screen">
-        <h1>⏱️ CRONÔMETRO DE AFERIÇÃO</h1>
-        <p>Toque na área abaixo a cada pulso/respiração sentida durante os 15 segundos:</p>
-
-        <div class="tap-zone" onclick="registerTap()">
-            <span style="font-size:30px;">👉 TOQUE AQUI 👈</span>
-            <div id="timer-display" style="font-size:22px; font-weight:bold; color:var(--accent-green); margin-top:8px;">Aguardando 1º toque...</div>
-            <div id="tap-count" style="font-size:14px; margin-top:4px;">Toques registrados: 0</div>
-        </div>
-
-        <div class="info-card">
-            <h3>📊 RESULTADO CALCULADO (x4):</h3>
-            <div id="calc-result" style="font-size:16px; font-weight:bold;">0 BPM / MRPM</div>
-            <div id="calc-status" style="font-size:11px; color:var(--accent-blue);">Inicie a contagem acima.</div>
-        </div>
-
-        <button class="btn-yellow" onclick="resetAfericaoTimer()">🔄 Reiniciar Contagem</button>
-        <button class="btn-back" onclick="resetAfericaoTimer(); changeScreen('screen-menu')">↩ Voltar ao Menu</button>
-    </div>
-
-    <!-- MÓDULO 3: PROTOCOLO XABCDE & SAMPLE -->
-    <div id="screen-xabcde" class="screen">
-        <h1>📋 XABCDE & SAMPLE</h1>
-        <div class="info-card" style="margin-bottom:10px;">
-            <b id="x-q-text">Carregando pergunta...</b>
-        </div>
-        <div id="x-options"></div>
-
-        <button class="btn-back" onclick="changeScreen('screen-menu')">↩ Voltar ao Menu</button>
-    </div>
-
-    <!-- MÓDULO 4: CASOS CLÍNICOS -->
-    <div id="screen-casos" class="screen">
-        <h1>CASO CLÍNICO</h1>
-        <div class="quiz-box">
-            <b id="patient-name">Paciente: Adulto, 42 anos</b>
-            <p id="patient-desc" style="font-size: 11px; margin: 4px 0;">Relata tontura e suor frio após corrida.</p>
-
-            <div class="vitals-grid">
-                <div class="vital-tag"><b>PA:</b> <span id="val-pa">120x80</span></div>
-                <div class="vital-tag"><b>FC:</b> <span id="val-fc">115 bpm</span></div>
-                <div class="vital-tag"><b>FR:</b> <span id="val-fr">16 mrpm</span></div>
-                <div class="vital-tag"><b>SpO2:</b> <span id="val-spo2">98%</span></div>
-                <div class="vital-tag"><b>TEMP:</b> <span id="val-temp">36.5 °C</span></div>
-                <div class="vital-tag"><b>GLICOSE:</b> <span id="val-gli">90 mg/dL</span></div>
+        <!-- MONITOR CARDÍACO HOLOGRÁFICO -->
+        <div class="cardiac-monitor">
+            <div style="font-size:11px; font-weight:bold; color:var(--accent-yellow);" id="pcr-level-title">NÍVEL 1: SELECIONE UM CASO</div>
+            <div class="monitor-grid">
+                <div class="monitor-val"><span id="lbl-ritmo">RITMO:</span><div id="mon-ritmo" style="color:var(--accent-red);">SEM PULSO</div></div>
+                <div class="monitor-val"><span id="lbl-fc">FC (BPM):</span><div id="mon-fc">0</div></div>
+                <div class="monitor-val"><span id="lbl-pa">PA (mmHg):</span><div id="mon-pa">0 x 0</div></div>
+                <div class="monitor-val"><span id="lbl-spo2">SpO2 (%):</span><div id="mon-spo2">0%</div></div>
             </div>
         </div>
 
-        <p style="font-weight: bold; margin: 5px 0;" id="case-question">Qual a alteração principal nos sinais vitais?</p>
-        <div id="case-options"></div>
+        <div class="quiz-box" style="border-left: 4px solid var(--accent-red);">
+            <b id="pcr-scen-title">Caso Clínico PCR</b>
+            <p id="pcr-scen-desc" style="font-size: 12px; margin: 6px 0; line-height: 1.4;">Carregando...</p>
+        </div>
+
+        <p style="font-weight: bold; margin: 5px 0; text-align:left; font-size:12px;" id="pcr-question">Qual a conduta imediata?</p>
+        <div id="pcr-options"></div>
 
         <button class="btn-back" onclick="changeScreen('screen-menu')">↩ Voltar ao Menu</button>
     </div>
 
-    <!-- MÓDULO 5: TABELA VALORES BASAIS -->
-    <div id="screen-basais" class="screen">
-        <h1>VALORES BASAIS (ADULTO)</h1>
-        <div class="info-card"><h3>❤️ FREQUÊNCIA CARDÍACA (FC)</h3>• <b>Normocardia:</b> 60 a 100 bpm<br>• <b>Taquicardia:</b> > 100 bpm<br>• <b>Bradicardia:</b> < 60 bpm</div>
-        <div class="info-card"><h3>🫁 FREQUÊNCIA RESPIRATÓRIA (FR)</h3>• <b>Eupneia:</b> 12 a 20 mrpm<br>• <b>Taquipneia:</b> > 20 mrpm<br>• <b>Bradipneia:</b> < 12 mrpm</div>
-        <div class="info-card"><h3>🩸 PRESSÃO ARTERIAL (PA)</h3>• <b>Normotensão:</b> ≤ 120x80 mmHg<br>• <b>Hipertensão:</b> ≥ 140x90 mmHg<br>• <b>Hipotensão:</b> PAS < 90 mmHg</div>
+    <!-- MÓDULO: SIMULADOR DE CONTENÇÃO DE HEMORRAGIAS -->
+    <div id="screen-hemo" class="screen">
+        <h1>🩸 CONTENÇÃO DE HEMORRAGIAS</h1>
+
+        <div class="quiz-box" style="border-left: 4px solid var(--accent-red);">
+            <b id="hemo-scen-title">Caso de Trauma Hemorrágico</b>
+            <p id="hemo-scen-desc" style="font-size: 12px; margin: 6px 0; line-height: 1.4;">Carregando...</p>
+        </div>
+
+        <p style="font-weight: bold; margin: 5px 0; text-align:left; font-size:12px;" id="hemo-question">Qual a técnica de contenção indicada para este local?</p>
+        <div id="hemo-options"></div>
+
+        <button class="btn-back" onclick="changeScreen('screen-menu')">↩ Voltar ao Menu</button>
+    </div>
+
+    <!-- FICHA AVALIAÇÃO APH -->
+    <div id="screen-checklist" class="screen">
+        <h1>📑 AVALIAÇÃO DA VÍTIMA (APH)</h1>
+        <div class="info-card" style="border-left-color: var(--accent-yellow);">
+            <h3 style="color:var(--accent-yellow);">1. AVALIAÇÃO DA CENA</h3>
+            • <b>Segurança da Cena:</b> O local é seguro para você e sua equipe?<br>
+            • <b>Mecanismo do Trauma:</b> O que aconteceu?<br>
+            • <b>EPIs & Apoio:</b> Usar luvas/óculos e chamar apoio se necessário.
+        </div>
+        <div class="info-card" style="border-left-color: var(--accent-red);">
+            <h3 style="color:var(--accent-red);">2. EXAME PRIMÁRIO (XABCDE)</h3>
+            • <b>X (Hemorragia Exsangue):</b> Estancar sangramentos arteriais graves em jato.<br>
+            • <b>A (Vias Aéreas + Cervical):</b> Permeabilidade de VA + Controle cervical.<br>
+            • <b>B (Boa Ventilação):</b> Expansão do tórax, frequência respiratória, oxigênio.<br>
+            • <b>C (Circulação):</b> Pulso, cor da pele, temperatura, tempo de enchimento capilar.<br>
+            • <b>D (Incapacidade Neurológica):</b> Escala de Glasgow (ECG-P) + Pupilas.<br>
+            • <b>E (Exposição + Hipotermia):</b> Expor lesões com cuidado e aquecer o paciente.
+        </div>
+        <button class="btn-back" onclick="changeScreen('screen-menu')">↩ Voltar ao Menu</button>
+    </div>
+
+    <!-- CASOS PRÁTICOS GLASGOW -->
+    <div id="screen-glasgow" class="screen">
+        <h1>🧠 CASO DE TRAUMA (GLASGOW)</h1>
+        <div class="quiz-box" style="border-left: 4px solid var(--accent-yellow);">
+            <b id="g-case-title" style="color:var(--accent-yellow); font-size:13px;">Cenário 1/4</b>
+            <p id="g-case-desc" style="font-size: 12px; margin: 6px 0; line-height: 1.4;">Carregando...</p>
+        </div>
+        <button class="btn-back" onclick="changeScreen('screen-menu')">↩ Voltar ao Menu</button>
+    </div>
+
+    <!-- CASOS PRÁTICOS XABCDE -->
+    <div id="screen-xabcde" class="screen">
+        <h1>📋 CASOS PRÁTICOS XABCDE & SAMPLE</h1>
+        <div class="quiz-box" style="border-left: 4px solid var(--accent-blue);">
+            <b id="x-case-title" style="color:var(--accent-blue); font-size:13px;">Ocorrência 1/4</b>
+            <p id="x-case-desc" style="font-size: 12px; margin: 6px 0; line-height: 1.4;">Carregando...</p>
+        </div>
         <button class="btn-back" onclick="changeScreen('screen-menu')">↩ Voltar ao Menu</button>
     </div>
 
@@ -207,163 +171,157 @@ select {
 function changeScreen(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen'));
     document.getElementById(id).classList.add('active-screen');
-    if(id === 'screen-casos') loadCase();
-    if(id === 'screen-xabcde') loadXabcdeQuestion();
-    if(id === 'screen-glasgow') loadGlasgowScenario();
+    if(id === 'screen-pcr') loadPcrScenario();
+    if(id === 'screen-hemo') loadHemoScenario();
 }
 
-// LOGICA CASOS PRATICOS DE GLASGOW (ECG-P)
-let currentGCase = 0;
-const glasgowScenarios = [
+// 🫀 LÓGICA DO SIMULADOR DE PCR (NÍVEIS + MONITOR)
+let currentPcrIndex = 0;
+const pcrScenarios = [
     {
-        title: "Cenário 1: Queda de Andaime (3m)",
-        desc: "Vítima deitada. Só abre os olhos ao receber pressão no trapézio (dor). Emite apenas gemidos e sons incompreensíveis. Ao estímulo doloroso, localiza a dor e tenta afastar a mão do socorrista. Pupilas: ambas reagem normalmente à luz.",
-        target: { ao: 2, rv: 2, rm: 5, p: 0 }, // Total = 9
-        explain: "AO=2 (À dor), RV=2 (Gemidos), RM=5 (Localiza dor), P=0 -> Glasgow 9 (TCE Moderado)"
+        level: "NÍVEL 1: LACTANTE (BEBÊ < 1 ANO)",
+        ritmo: "FIBRILAÇÃO VENTRICULAR", fc: "0", pa: "0 x 0", spo2: "0%",
+        title: "Bebê de 7 meses encontrado irresponsivo no berço",
+        desc: "Você checa a irresponsividade e o bebê não responde. Não há pulso braquial detectável em 10 segundos e não há respiração (apneia). Suporte acionado.",
+        q: "Qual a técnica correta de compressão e conduta para este lactante?",
+        options: [
+            { t: "Compressão com 2 dedos (ou 2 polegares abraçando o tórax) a 100-120/min + DEA com pá pediátrica", r: true },
+            { t: "Compressão com as duas mãos sobrepostas no centro do peito", r: false },
+            { t: "Dar socos no peito e aguardar o SAMU sem realizar compressões", r: false }
+        ],
+        successRitmo: "SINUSAL", successFc: "125", successPa: "85 x 55", successSpo2: "97%",
+        explain: "No lactante, a compressão é feita com 2 dedos ou 2 polegares abraçando o tórax (se houver 2 socorristas), afundando cerca de 4cm (1/3 do diâmetro anteroposterior)."
     },
     {
-        title: "Cenário 2: Colisão Moto x Auto",
-        desc: "Motociclista sem capacete. Olhos abertos espontaneamente, conversando e orientado no tempo/espaço. Obedece prontamente quando pedido para apertar a mão do socorrista. Pupilas: fotorreativas e iguais.",
-        target: { ao: 4, rv: 5, rm: 6, p: 0 }, // Total = 15
-        explain: "AO=4 (Espontânea), RV=5 (Orientado), RM=6 (Obedece), P=0 -> Glasgow 15 (Normal)"
+        level: "NÍVEL 2: ADULTO (RITMO CHOCÁVEL - FV/TVSP)",
+        ritmo: "FIBRILAÇÃO VENTRICULAR (FV)", fc: "210 (Caótico)", pa: "0 x 0", spo2: "0%",
+        title: "Homem de 50 anos desmaia na academia",
+        desc: "Sem pulso carotídeo e sem respiração (apneia). Você inicia a RCP e o DEA chega ao local.",
+        q: "O DEA analisa o ritmo e emite a mensagem: 'CHOQUE RECOMENDADO'. Qual a sequência exata de ação?",
+        options: [
+            { t: "Garantir que NINGUÉM toque na vítima -> Pressionar botão de Choque -> Retomar RCP imediatamente por 2 min", r: true },
+            { t: "Checar o pulso antes de disparar o choque enquanto segura o braço da vítima", r: false },
+            { t: "Desligar o DEA e fazer apenas ventilações de resgate", r: false }
+        ],
+        successRitmo: "SINUSAL", successFc: "88", successPa: "110 x 70", successSpo2: "95%",
+        explain: "Em ritmos chocáveis (FV/TV sem pulso), o choque limpa a atividade elétrica caótica. Afastar todos da vítima antes do disparo é segurança vital. A RCP deve ser retomada imediatamente após o choque."
     },
     {
-        title: "Cenário 3: Atropelamento Grave",
-        desc: "Vítima inconsciente na pista. Olhos fechados mesmo com dor intensa (sem resposta). Sem emissão de nenhum som. Ao estímulo doloroso, estende os braços rigidamente ao lado do corpo (descerebração). Pupila direita dilatada e sem reação à luz.",
-        target: { ao: 1, rv: 1, rm: 2, p: -1 }, // Total = 3 - 1 = 2
-        explain: "AO=1, RV=1, RM=2 (Extensão/Descerebração), P=-1 (Uma pupila arreativa) -> Glasgow 2 (TCE Grave)"
-    },
-    {
-        title: "Cenário 4: Agressão Física com Paulada",
-        desc: "Vítima no chão. Abre os olhos quando o socorrista chama alto ('Senhor!'). Responde às perguntas mas está confuso sobre o que aconteceu. Dobra o braço rápido afastando da dor. Pupilas reagem bem.",
-        target: { ao: 3, rv: 4, rm: 4, p: 0 }, // Total = 11
-        explain: "AO=3 (Ao som), RV=4 (Confuso), RM=4 (Retirada/Flexão normal), P=0 -> Glasgow 11 (TCE Moderado)"
+        level: "NÍVEL 3: ADULTO (RITMO NÃO CHOCÁVEL - ASSISTOLIA)",
+        ritmo: "ASSISTOLIA (LINHA RETA)", fc: "0", pa: "0 x 0", spo2: "0%",
+        title: "Vítima encontrada desacordada em parada prolongada",
+        desc: "O monitor mostra uma linha reta (Assistolia). O DEA analisa e emite a mensagem: 'CHOQUE NÃO RECOMENDADO'.",
+        q: "Como proceder diante de um ritmo NÃO chocável?",
+        options: [
+            { t: "Manter RCP contínua de alta qualidade (30:2 ou contínua) + Buscar causas reversíveis (5Hs e 5Ps)", r: true },
+            { t: "Forçar o disparo do choque no botão do DEA repetidamente", r: false },
+            { t: "Aguardar 5 minutos sem fazer nada para o DEA reanalisar sozinho", r: false }
+        ],
+        successRitmo: "SINUSAL", successFc: "65", successPa: "95 x 60", successSpo2: "92%",
+        explain: "Assistolia e AEP são ritmos NÃO chocáveis. O tratamento consiste em RCP ininterrupta de alta qualidade e identificação de causas reversíveis (Hipóxia, Hipovolemia, Hipotermia, etc.)."
     }
 ];
 
-function loadGlasgowScenario() {
-    if(currentGCase >= glasgowScenarios.length) currentGCase = 0;
-    const c = glasgowScenarios[currentGCase];
-    document.getElementById("g-case-title").innerHTML = `${c.title} (${currentGCase + 1}/${glasgowScenarios.length})`;
-    document.getElementById("g-case-desc").innerHTML = c.desc;
-}
+function loadPcrScenario() {
+    if(currentPcrIndex >= pcrScenarios.length) currentPcrIndex = 0;
+    const c = pcrScenarios[currentPcrIndex];
 
-function evaluateGlasgowCase() {
-    const c = glasgowScenarios[currentGCase];
-    const userAO = parseInt(document.getElementById("g-ao").value);
-    const userRV = parseInt(document.getElementById("g-rv").value);
-    const userRM = parseInt(document.getElementById("g-rm").value);
-    const userP = parseInt(document.getElementById("g-p").value);
+    document.getElementById("pcr-level-title").innerHTML = c.level;
+    document.getElementById("mon-ritmo").innerHTML = c.ritmo;
+    document.getElementById("mon-ritmo").style.color = "var(--accent-red)";
+    document.getElementById("mon-fc").innerHTML = c.fc;
+    document.getElementById("mon-pa").innerHTML = c.pa;
+    document.getElementById("mon-spo2").innerHTML = c.spo2;
 
-    if(userAO === c.target.ao && userRV === c.target.rv && userRM === c.target.rm && userP === c.target.p) {
-        alert("🟢 EXCELENTE, SOCORRISTA!\nSua avaliação de Glasgow está 100% CORRETA!\n\n" + c.explain);
-        currentGCase++;
-        loadGlasgowScenario();
-    } else {
-        const correctTotal = c.target.ao + c.target.rv + c.target.rm + c.target.p;
-        alert(`🔴 ATENÇÃO! AVALIAÇÃO INCORRETA.\n\nSua resposta não bateu com o quadro clínico.\n\n` + c.explain + `\nTente novamente!`);
-    }
-}
+    document.getElementById("pcr-scen-title").innerHTML = c.title;
+    document.getElementById("pcr-scen-desc").innerHTML = c.desc;
+    document.getElementById("pcr-question").innerHTML = c.q;
 
-// LOGICA CRONOMETRO AFERICAO
-let tapCount = 0;
-let tapTimer = null;
-let timeLeft = 15;
-let timerRunning = false;
-
-function registerTap() {
-    if(!timerRunning) {
-        timerRunning = true;
-        timeLeft = 15;
-        tapCount = 1;
-        document.getElementById("tap-count").innerHTML = `Toques registrados: ${tapCount}`;
-        
-        tapTimer = setInterval(() => {
-            timeLeft--;
-            document.getElementById("timer-display").innerHTML = `⏳ Tempo: ${timeLeft}s`;
-            if(timeLeft <= 0) {
-                clearInterval(tapTimer);
-                timerRunning = false;
-                evaluateAfericao();
-            }
-        }, 1000);
-    } else {
-        tapCount++;
-        document.getElementById("tap-count").innerHTML = `Toques registrados: ${tapCount}`;
-    }
-}
-
-function evaluateAfericao() {
-    const totalBpm = tapCount * 4;
-    document.getElementById("calc-result").innerHTML = `${totalBpm} BPM / MRPM`;
-    let status = "Valor dentro da faixa esperada em repouso.";
-    if(totalBpm > 100) status = "⚠️ Frequência Elevada (Ex: Taquicardia ou Taquipneia)";
-    else if(totalBpm < 60) status = "⚠️ Frequência Baixa (Ex: Bradicardia ou Bradipneia)";
-    document.getElementById("calc-status").innerHTML = status;
-    document.getElementById("timer-display").innerHTML = "✅ Concluído!";
-}
-
-function resetAfericaoTimer() {
-    clearInterval(tapTimer);
-    timerRunning = false;
-    tapCount = 0;
-    document.getElementById("timer-display").innerHTML = "Aguardando 1º toque...";
-    document.getElementById("tap-count").innerHTML = "Toques registrados: 0";
-    document.getElementById("calc-result").innerHTML = "0 BPM / MRPM";
-    document.getElementById("calc-status").innerHTML = "Inicie a contagem acima.";
-}
-
-// LOGICA XABCDE & SAMPLE
-let xIndex = 0;
-const xQuestions = [
-    { q: "No atendimento inicial de trauma (XABCDE), qual a primeira letra e prioridade absoluta?", options: [{t:"X: Contenção de Hemorragia Exsangue grave", r:true}, {t:"A: Abertura de Vias Aéreas", r:false}] },
-    { q: "O que significa a letra 'M' na anamnese rápida do protocolo SAMPLE?", options: [{t:"Medicamentos em uso habitual", r:true}, {t:"Movimentação dos membros", r:false}] },
-    { q: "Na letra 'B' do XABCDE, qual avaliação principal deve ser realizada?", options: [{t:"Boa Ventilação e Ausculta Pulmonar", r:true}, {t:"Batimentos Cardíacos e Pulso", r:false}] }
-];
-
-function loadXabcdeQuestion() {
-    if(xIndex >= xQuestions.length) xIndex = 0;
-    const q = xQuestions[xIndex];
-    document.getElementById("x-q-text").innerHTML = q.q;
-    const optDiv = document.getElementById("x-options");
+    const optDiv = document.getElementById("pcr-options");
     optDiv.innerHTML = "";
-    q.options.forEach(o => {
+    c.options.forEach(o => {
         const btn = document.createElement("button");
         btn.innerHTML = o.t;
         btn.onclick = () => {
-            if(o.r) alert("🟢 RESPOSTA CORRETA!");
-            else alert("🔴 INCORRETO!");
-            xIndex++;
-            loadXabcdeQuestion();
+            if(o.r) {
+                // Atualiza monitor para sinais de reversão
+                document.getElementById("mon-ritmo").innerHTML = c.successRitmo;
+                document.getElementById("mon-ritmo").style.color = "var(--accent-green)";
+                document.getElementById("mon-fc").innerHTML = c.successFc;
+                document.getElementById("mon-pa").innerHTML = c.successPa;
+                document.getElementById("mon-spo2").innerHTML = c.successSpo2;
+
+                alert("🟢 PARADA REVERTIDA COM SUCESSO!\n\n" + c.explain);
+                currentPcrIndex++;
+                setTimeout(loadPcrScenario, 1500);
+            } else {
+                alert("🔴 CONDUTA INCORRETA!\nA reanimação falhou. Revise a sequência de RCP/DEA.");
+            }
         };
         optDiv.appendChild(btn);
     });
 }
 
-// CASOS CLINICOS
-function loadCase() {
-    const c = {
-        name: "Paciente: Homem, 35 anos", desc: "Queixa de palpitação e ansiedade no trabalho.",
-        pa: "120x80 mmHg", fc: "125 bpm", fr: "16 mrpm", spo2: "98%", temp: "36.6 °C", gli: "88 mg/dL",
-        question: "Como você classifica a Frequência Cardíaca (FC) de 125 bpm?",
-        options: [{ text: "Taquicardia", correct: true }, { text: "Normocardia", correct: false }]
-    };
-    document.getElementById("patient-name").innerHTML = c.name;
-    document.getElementById("patient-desc").innerHTML = c.desc;
-    document.getElementById("val-pa").innerHTML = c.pa;
-    document.getElementById("val-fc").innerHTML = c.fc;
-    document.getElementById("val-fr").innerHTML = c.fr;
-    document.getElementById("val-spo2").innerHTML = c.spo2;
-    document.getElementById("val-temp").innerHTML = c.temp;
-    document.getElementById("val-gli").innerHTML = c.gli;
-    document.getElementById("case-question").innerHTML = c.question;
+// 🩸 LÓGICA DO SIMULADOR DE HEMORRAGIAS
+let currentHemoIndex = 0;
+const hemoScenarios = [
+    {
+        title: "Cenário 1: Ferimento por Fratura Exposta na Coxa",
+        desc: "Vítima de acidente de trânsito apresenta sangramento arterial maciço e jorrante na coxa direita (região de membro).",
+        q: "Qual o método de contenção indicado para este sangramento exsangue em membro?",
+        options: [
+            { t: "Aplicar TORNIQUETE de extremidade 5 a 7 cm acima da lesão (sem cobrir articulação)", r: true },
+            { t: "Fazer apenas elevação do membro e aguardar parar sozinho", r: false },
+            { t: "Preencher a ferida com algodão e lavar com água quente", r: false }
+        ],
+        explain: "Em sangramentos arteriais graves nas extremidades (braços/pernas), o TORNIQUETE é a primeira escolha do protocolo XABCDE. Anote o horário de aplicação!"
+    },
+    {
+        title: "Cenário 2: Perfuração por Faca na Virilha (Região Inguinal)",
+        desc: "Vítima de agressão com corte profundo na virilha (área de junção/transição). Sangramento volumoso continuo. O local NÃO permite fixação de torniquete.",
+        q: "Qual a conduta de contenção correta para áreas de junção (virilha/axila/pescoço)?",
+        options: [
+            { t: "Preenchimento de Ferida (Wound Packing) com gaze hemostática + Pressão Direta contínua", r: true },
+            { t: "Colocar um torniquete no abdômen apertando a cintura", r: false },
+            { t: "Passar pomada cicatrizante e cobrir com fita micropore", r: false }
+        ],
+        explain: "Em regiões de junção onde o torniquete não encaixa (virilha, axilas, pescoço), o PREENCHIMENTO DE FERIDA (Wound Packing) até a origem do sangramento com pressão direta firme é o procedimento indicado."
+    },
+    {
+        title: "Cenário 3: Corte Venoso Superficial no Antebraço",
+        desc: "Corte contínuo porém de fluxo lento e cor escura (sangramento venoso) no antebraço sem atingir artéria.",
+        q: "Qual o método de contenção indicado?",
+        options: [
+            { t: "Pressão Direta no local com compressa limpa + Bandagem Compressiva", r: true },
+            { t: "Aperto imediato de torniquete na barra do ombro", r: false },
+            { t: "Cauterizar o local com fogo", r: false }
+        ],
+        explain: "Para sangramentos venosos e capilares sem risco de exsanguição imediata, a Pressão Direta firme seguida de Bandagem Compressiva é suficiente e eficaz."
+    }
+];
 
-    const optDiv = document.getElementById("case-options");
+function loadHemoScenario() {
+    if(currentHemoIndex >= hemoScenarios.length) currentHemoIndex = 0;
+    const c = hemoScenarios[currentHemoIndex];
+
+    document.getElementById("hemo-scen-title").innerHTML = `${c.title} (${currentHemoIndex + 1}/${hemoScenarios.length})`;
+    document.getElementById("hemo-scen-desc").innerHTML = c.desc;
+    document.getElementById("hemo-question").innerHTML = c.q;
+
+    const optDiv = document.getElementById("hemo-options");
     optDiv.innerHTML = "";
-    c.options.forEach(opt => {
+    c.options.forEach(o => {
         const btn = document.createElement("button");
-        btn.innerHTML = opt.text;
-        btn.onclick = () => alert(opt.correct ? "🟢 CORRETO!" : "🔴 INCORRETO!");
+        btn.innerHTML = o.t;
+        btn.onclick = () => {
+            if(o.r) {
+                alert("🟢 HEMORRAGIA CONTIDA COM SUCESSO!\n\n" + c.explain);
+                currentHemoIndex++;
+                loadHemoScenario();
+            } else {
+                alert("🔴 TÉCNICA INCORRETA!\nO sangramento continua ativo. Lembre-se: Torniquete em membros, Preenchimento em junções e Pressão direta em venosos.");
+            }
+        };
         optDiv.appendChild(btn);
     });
 }
