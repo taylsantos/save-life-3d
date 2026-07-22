@@ -1,21 +1,29 @@
-<!DOCTYPE html>
+import os
+
+html_code = """<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SOS HERO - Tablet Tático de APH</title>
+<title>SOS HERO - Plataforma Avançada de APH & Atlas Anatômico 3D</title>
+
+<!-- Importação de bibliotecas para 3D (Three.js) e Ícones -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
 :root {
-    --bg-main: #070c14;
-    --tablet-frame: #1b2636;
-    --tablet-border: #2c3e55;
-    --card-bg: #0d1520;
+    --bg-main: #060a12;
+    --tablet-frame: #121d2b;
+    --tablet-border: #1f3148;
+    --card-bg: #0a1320;
     --accent-blue: #00f0ff;
     --accent-green: #00e676;
     --accent-red: #ff1744;
     --accent-yellow: #ffd166;
     --accent-orange: #ff9100;
+    --accent-purple: #b388ff;
     --text-primary: #ffffff;
     --text-dim: #8fa3bf;
 }
@@ -23,7 +31,7 @@
 * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
     background: var(--bg-main);
     color: var(--text-primary);
     display: flex; justify-content: center; align-items: center;
@@ -32,19 +40,20 @@ body {
 
 /* 📱 ESTRUTURA DO TABLET DE RESGATE */
 .tablet-container {
-    width: 100vw; max-width: 500px; height: 96vh; max-height: 920px;
-    background: var(--tablet-frame); border-radius: 28px;
+    width: 100vw; max-width: 540px; height: 96vh; max-height: 940px;
+    background: var(--tablet-frame); border-radius: 32px;
     display: flex; flex-direction: column; overflow: hidden;
     border: 8px solid var(--tablet-border);
-    box-shadow: 0 0 40px rgba(0, 240, 255, 0.2), inset 0 0 10px rgba(0,0,0,0.8);
+    box-shadow: 0 0 50px rgba(0, 240, 255, 0.25), inset 0 0 15px rgba(0,0,0,0.9);
     position: relative; padding: 6px;
 }
 
 /* BARRA DE STATUS DO TABLET */
 .tablet-statusbar {
-    background: #04070d; padding: 6px 14px; border-radius: 18px 18px 6px 6px;
+    background: #03060a; padding: 8px 16px; border-radius: 22px 22px 8px 8px;
     display: flex; justify-content: space-between; align-items: center;
-    font-size: 10px; color: var(--text-dim); border-bottom: 1px solid var(--tablet-border);
+    font-size: 11px; color: var(--text-dim); border-bottom: 1px solid var(--tablet-border);
+    z-index: 10;
 }
 .status-badge {
     padding: 2px 8px; border-radius: 10px; font-weight: bold; text-transform: uppercase; font-size: 9px;
@@ -53,26 +62,27 @@ body {
 .badge-time { background: rgba(255, 209, 102, 0.15); color: var(--accent-yellow); }
 
 /* TELAS DO SISTEMA */
-.screen { display: none; flex-direction: column; height: 100%; padding: 8px; overflow-y: auto; background: var(--card-bg); border-radius: 12px; margin-top: 4px; }
+.screen { display: none; flex-direction: column; height: 100%; padding: 10px; overflow-y: auto; background: var(--card-bg); border-radius: 14px; margin-top: 6px; }
 .screen.active { display: flex; }
 
-h1 { font-size: 16px; color: var(--accent-blue); text-transform: uppercase; margin-bottom: 4px; text-shadow: 0 0 8px rgba(0,240,255,0.3); }
-h2 { font-size: 13px; color: var(--text-primary); margin-bottom: 6px; }
-p { font-size: 11px; color: var(--text-dim); margin-bottom: 8px; line-height: 1.3; }
+h1 { font-size: 18px; color: var(--accent-blue); text-transform: uppercase; margin-bottom: 4px; text-shadow: 0 0 10px rgba(0,240,255,0.4); text-align: center; }
+h2 { font-size: 13px; color: var(--text-primary); margin: 8px 0 4px 0; text-transform: uppercase; letter-spacing: 0.5px; }
+p { font-size: 11px; color: var(--text-dim); margin-bottom: 8px; line-height: 1.4; }
 
 /* BOTÕES TÁTICOS */
 button {
     background: rgba(0, 240, 255, 0.12); color: #fff; border: 1px solid var(--accent-blue);
-    padding: 9px 10px; border-radius: 8px; font-weight: bold; font-size: 10px;
-    cursor: pointer; text-transform: uppercase; transition: all 0.2s; margin: 2px 0;
-    display: flex; align-items: center; justify-content: center; gap: 5px;
+    padding: 10px 12px; border-radius: 8px; font-weight: bold; font-size: 10px;
+    cursor: pointer; text-transform: uppercase; transition: all 0.2s; margin: 3px 0;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
 }
-button:active { transform: scale(0.97); background: rgba(0, 240, 255, 0.25); }
+button:hover { background: rgba(0, 240, 255, 0.25); border-color: #ffffff; }
+button:active { transform: scale(0.97); }
 .btn-red { background: rgba(255, 23, 68, 0.15); border-color: var(--accent-red); color: #ff80ab; }
 .btn-green { background: rgba(0, 230, 118, 0.15); border-color: var(--accent-green); color: var(--accent-green); }
 .btn-yellow { background: rgba(255, 209, 102, 0.15); border-color: var(--accent-yellow); color: var(--accent-yellow); }
 .btn-orange { background: rgba(255, 145, 0, 0.15); border-color: var(--accent-orange); color: var(--accent-orange); }
-.btn-purple { background: rgba(186, 104, 200, 0.15); border-color: #ba68c8; color: #e1bee7; }
+.btn-purple { background: rgba(179, 136, 255, 0.15); border-color: var(--accent-purple); color: var(--accent-purple); }
 .btn-back { background: rgba(255,255,255,0.05); color: #aaa; border-color: #444; margin-top: auto; }
 
 /* MONITOR CARDIÁCO */
@@ -82,7 +92,7 @@ button:active { transform: scale(0.97); background: rgba(0, 240, 255, 0.25); }
 }
 .mon-box {
     background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);
-    border-radius: 5px; padding: 3px 5px; text-align: left;
+    border-radius: 5px; padding: 4px 6px; text-align: left;
 }
 .mon-label { font-size: 8px; color: var(--text-dim); font-weight: bold; display: block; }
 .mon-value { font-family: monospace; font-size: 14px; font-weight: bold; margin-top: 1px; }
@@ -92,47 +102,64 @@ button:active { transform: scale(0.97); background: rgba(0, 240, 255, 0.25); }
 .val-blue { color: var(--accent-blue); }
 
 .ecg-line {
-    grid-column: span 3; height: 22px; background: #000; border-radius: 4px;
+    grid-column: span 3; height: 24px; background: #000; border-radius: 4px;
     border: 1px solid rgba(0, 230, 118, 0.2); position: relative;
-    display: flex; align-items: center; justify-content: center;
+    display: flex; align-items: center; justify-content: center; overflow: hidden;
 }
-.ecg-wave { width: 100%; height: 2px; background: var(--accent-green); box-shadow: 0 0 8px var(--accent-green); }
-.ecg-flat { background: var(--accent-red); box-shadow: 0 0 8px var(--accent-red); }
+.ecg-wave { width: 100%; height: 2px; background: var(--accent-green); box-shadow: 0 0 10px var(--accent-green); animation: ecgPulse 1s infinite linear; }
+.ecg-flat { background: var(--accent-red); box-shadow: 0 0 10px var(--accent-red); animation: none; }
+@keyframes ecgPulse { 0% { transform: scaleY(1); } 50% { transform: scaleY(3); } 100% { transform: scaleY(1); } }
 
-/* VIEWPORT DO PACIENTE 2D */
-.viewport-2d {
-    position: relative; width: 100%; height: 160px; background: #0a111a;
-    border-radius: 10px; border: 1.5px solid #1d2d3e; overflow: hidden; margin-bottom: 6px;
-    display: flex; justify-content: center; align-items: center;
+/* VIEWPORT DO BONECO 3D */
+.viewport-3d-container {
+    position: relative; width: 100%; height: 200px; background: #040810;
+    border-radius: 12px; border: 1.5px solid #1d2d3e; overflow: hidden; margin-bottom: 6px;
 }
-
-.dummy { position: relative; width: 130px; height: 45px; cursor: pointer; }
-.dummy-head { position: absolute; left: 0; top: 10px; width: 24px; height: 24px; background: #ffcc99; border-radius: 50%; border: 2px solid #000; display: flex; justify-content: center; align-items: center; }
-.dummy-eye { font-size: 7px; color: #000; }
-.dummy-torso { position: absolute; left: 26px; top: 7px; width: 50px; height: 30px; background: #2980b9; border-radius: 5px; border: 2px solid #000; transition: transform 0.1s; }
-.dummy-arm { position: absolute; left: 32px; top: -2px; width: 36px; height: 8px; background: #1f618d; border-radius: 4px; border: 1px solid #000; transform-origin: left center; transition: all 0.3s; }
-.dummy-legs { position: absolute; left: 78px; top: 11px; width: 50px; height: 20px; background: #34495e; border-radius: 4px; border: 2px solid #000; }
-.wound-spot { position: absolute; width: 12px; height: 12px; background: var(--accent-red); border-radius: 50%; box-shadow: 0 0 10px var(--accent-red); animation: pulseBleed 0.6s infinite alternate; display: none; }
-@keyframes pulseBleed { from { transform: scale(0.8); opacity: 0.5; } to { transform: scale(1.3); opacity: 1; } }
+#canvas-3d { width: 100%; height: 100%; }
+.viewport-controls {
+    position: absolute; bottom: 6px; right: 6px; display: flex; gap: 4px; z-index: 5;
+}
+.btn-3d-ctrl { padding: 4px 8px; font-size: 9px; background: rgba(0,0,0,0.7); border: 1px solid var(--accent-blue); color: #fff; border-radius: 4px; }
 
 /* TABS E NAVEGAÇÃO */
-.action-tabs { display: flex; gap: 2px; overflow-x: auto; margin-bottom: 6px; padding-bottom: 2px; }
-.tab-btn { padding: 5px 8px; font-size: 9px; white-space: nowrap; flex: none; border-radius: 5px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--text-dim); }
+.action-tabs { display: flex; gap: 3px; overflow-x: auto; margin-bottom: 6px; padding-bottom: 2px; }
+.tab-btn { padding: 6px 10px; font-size: 9px; white-space: nowrap; flex: none; border-radius: 6px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--text-dim); }
 .tab-btn.active { background: var(--accent-blue); color: #000; font-weight: bold; border-color: var(--accent-blue); }
 
-.action-panel { display: none; flex-direction: column; gap: 3px; }
+.action-panel { display: none; flex-direction: column; gap: 4px; }
 .action-panel.active { display: flex; }
 
-.feedback-msg { font-size: 10px; font-weight: bold; color: var(--accent-yellow); background: rgba(0,0,0,0.5); padding: 5px; border-radius: 5px; margin-bottom: 4px; min-height: 26px; display: flex; align-items: center; }
+.feedback-msg { font-size: 10px; font-weight: bold; color: var(--accent-yellow); background: rgba(0,0,0,0.6); padding: 6px 8px; border-radius: 6px; margin-bottom: 6px; min-height: 28px; display: flex; align-items: center; border-left: 3px solid var(--accent-yellow); }
 
-.chat-box { display: flex; gap: 4px; margin-bottom: 4px; }
-.chat-input { flex: 1; padding: 6px 8px; border-radius: 6px; border: 1px solid var(--accent-blue); background: #050a10; color: #fff; font-size: 10px; outline: none; }
+.chat-box { display: flex; gap: 4px; margin-bottom: 6px; }
+.chat-input { flex: 1; padding: 6px 10px; border-radius: 6px; border: 1px solid var(--accent-blue); background: #050a10; color: #fff; font-size: 10px; outline: none; }
 
-.anatomy-card { background: rgba(0,0,0,0.4); border: 1px solid var(--accent-blue); border-radius: 8px; padding: 8px; margin-bottom: 6px; text-align: center; }
-.svg-container { width: 100%; max-height: 140px; display: flex; justify-content: center; align-items: center; margin: 4px 0; }
+/* ANIMAÇÃO DA AMBULÂNCIA */
+.ambulance-overlay {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(3, 6, 10, 0.95); z-index: 100; display: none;
+    flex-direction: column; justify-content: center; align-items: center; text-align: center;
+}
+.ambulance-anim { font-size: 60px; animation: driveAnim 2s infinite alternate ease-in-out; }
+@keyframes driveAnim { 0% { transform: translateX(-40px) scale(0.9); } 100% { transform: translateX(40px) scale(1.1); } }
+.siren-lights { width: 100%; height: 6px; background: linear-gradient(90deg, red, blue, red, blue); animation: sirenFlash 0.3s infinite; margin-bottom: 15px; }
+@keyframes sirenFlash { 0% { opacity: 0.2; } 100% { opacity: 1; } }
+
+/* PAINEL DE ANATOMIA */
+.anatomy-sys-btn { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-bottom: 8px; }
+.sys-info-box { background: rgba(0,240,255,0.05); border: 1px solid var(--accent-blue); border-radius: 8px; padding: 10px; font-size: 11px; line-height: 1.4; margin-top: 6px; text-align: left; }
 
 .code-section { background: rgba(0,0,0,0.3); padding: 8px; border-radius: 6px; margin-bottom: 6px; border-left: 3px solid var(--accent-blue); font-size: 10px; text-align: left; }
 .code-section h3 { font-size: 11px; color: var(--accent-blue); margin-bottom: 4px; text-transform: uppercase; }
+
+/* MODAL DE RCP REALISTA 30:2 x 5 */
+.rcp-modal {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(5, 10, 18, 0.98); z-index: 90; display: none;
+    flex-direction: column; padding: 12px; justify-content: space-between; text-align: center;
+}
+.rcp-counter { font-size: 36px; font-family: monospace; font-weight: bold; color: var(--accent-green); margin: 10px 0; }
+.rcp-cycle-badge { font-size: 14px; color: var(--accent-yellow); font-weight: bold; background: rgba(255,209,102,0.1); padding: 4px 12px; border-radius: 12px; display: inline-block; }
 </style>
 </head>
 <body>
@@ -141,36 +168,73 @@ button:active { transform: scale(0.97); background: rgba(0, 240, 255, 0.25); }
 
     <!-- BARRA DE STATUS DO TABLET -->
     <div class="tablet-statusbar">
-        <span>📟 TABLET APH v9.0</span>
-        <span class="status-badge badge-gps" id="top-loc">GPS: AGUARDANDO</span>
+        <span>📟 TABLET APH PRO v10.0</span>
+        <span class="status-badge badge-gps" id="top-loc">GPS: PRONTO</span>
         <span class="status-badge badge-time" id="top-timer">00:00</span>
-        <span>🔋 98%</span>
+        <span>🔋 100%</span>
+    </div>
+
+    <!-- ANIMAÇÃO DE TRANSITION DA AMBULÂNCIA -->
+    <div class="ambulance-overlay" id="amb-overlay">
+        <div class="siren-lights"></div>
+        <div class="ambulance-anim">🚑</div>
+        <h2 id="amb-title" style="color:var(--accent-blue); margin-top:10px;">DESLOCANDO VIATURA...</h2>
+        <p id="amb-subtitle" style="color:var(--text-dim);">Unidade de Suporte Avançado em Código 3</p>
+    </div>
+
+    <!-- MODAL DE RCP REALISTA 30:2 x 5 -->
+    <div class="rcp-modal" id="rcp-modal">
+        <h2 style="color:var(--accent-red);">🫀 PROTOCOLO DE RCP DE ALTA PERFORMANCE (AHA)</h2>
+        <div>
+            <span class="rcp-cycle-badge" id="rcp-cycle-txt">CICLO 1 / 5</span>
+            <div class="rcp-counter" id="rcp-num">00 / 30</div>
+            <p id="rcp-instruction" style="font-size:12px; color:#fff;">Pressione COMPRIMIR no ritmo de 100-120 BPM!</p>
+        </div>
+        <div style="display:flex; gap:6px;">
+            <button class="btn-red" style="flex:1; padding:15px;" onclick="pressRcpCompress()">🫀 COMPRIMIR (TÓRAX)</button>
+            <button class="btn-blue" style="flex:1; padding:15px;" id="btn-ambu" disabled onclick="pressRcpVentilate()">🌬️ VENTILAR (AMBU 2x)</button>
+        </div>
+        <button class="btn-back" onclick="closeRcpModal()">ABANDONAR RCP</button>
     </div>
 
     <!-- TELA 1: MENU PRINCIPAL DO TABLET -->
     <div id="screen-menu" class="screen active">
-        <div style="text-align:center; margin: 6px 0;">
-            <span style="font-size: 32px;">🚑</span>
-            <h1>PRANCHETA TÁTICA SOCORRISTA</h1>
-            <p>Selecione a Ocorrência ou Módulo de Estudos</p>
+        <div style="text-align:center; margin: 8px 0;">
+            <span style="font-size: 36px;">🚑</span>
+            <h1>SOS HERO - APH & ANATOMIA 3D</h1>
+            <p>Plataforma Profissional de Atendimento Pré-Hospitalar</p>
         </div>
 
-        <h2>OCORRÊNCIAS DE CAMPO:</h2>
-        <button class="btn-purple" onclick="startRandomScenario()">🎲 6. OCORRÊNCIA GERAL (SURPRESA / ALEATÓRIA)</button>
-        <button class="btn-red" onclick="startScenario('ovace')">🫁 1. CASO OVACE (ENGASGO GRAVE)</button>
-        <button class="btn-orange" onclick="startScenario('hemo_int')">🩸 2. TRAUMA COM HEMORRAGIA INTERNA</button>
-        <button class="btn-yellow" onclick="startScenario('hemo_ext')">🩹 3. ATROPELAMENTO (HEMORRAGIA EXTERNA)</button>
-        <button class="btn-red" onclick="startScenario('pcr_direct')">🫀 4. PARADA CARDIORRESPIRATÓRIA (PCR)</button>
-        <button class="btn-green" onclick="startScenario('overdose')">💊 5. OVERDOSE EM CASA NOTURNA</button>
+        <h2>MÓDULOS PRINCIPAIS:</h2>
+        <button class="btn-purple" style="padding:12px;" onclick="changeScreen('screen-sim-select')">
+            <i class="fa-solid fa-truck-medical"></i> 🚨 1. SIMULADOR APH (OCORRÊNCIAS & PRÁTICA)
+        </button>
+        <button class="btn-yellow" style="padding:12px;" onclick="changeScreen('screen-anatomy')">
+            <i class="fa-solid fa-bone"></i> 🏛️ 2. ATLAS INTERATIVO DE ANATOMIA 3D (11 SISTEMAS)
+        </button>
+        <button onclick="changeScreen('screen-radio')" style="padding:10px;">
+            <i class="fa-solid fa-walkie-talkie"></i> 📻 3. CENTRAL DE CÓDIGOS DE COMUNICAÇÃO & RÁDIO
+        </button>
 
-        <h2 style="margin-top:8px;">CENTRO DE ESTUDOS TÁTICOS:</h2>
-        <button class="btn-yellow" onclick="changeScreen('screen-anatomy')">🫀 ANATOMIA & FISIOLOGIA APLICADA</button>
-        <button onclick="changeScreen('screen-radio')">📻 CÓDIGOS DE COMUNICAÇÃO & RÁDIO</button>
-
-        <p style="margin-top: auto; text-align: center; font-size: 9px; opacity: 0.4;">Sistema de Suporte APH Pro • 2026</p>
+        <p style="margin-top: auto; text-align: center; font-size: 9px; opacity: 0.4;">Sistema de Instrução Tática de Emergência • 2026</p>
     </div>
 
-    <!-- TELA 2: ATENDIMENTO EM TEMPO REAL -->
+    <!-- TELA SELEÇÃO DE SIMULAÇÃO -->
+    <div id="screen-sim-select" class="screen">
+        <h1>🚨 SELECIONE A OCORRÊNCIA</h1>
+        <p>Atendimento tático com deterioração fisiológica viva:</p>
+
+        <button class="btn-purple" onclick="startRandomScenario()">🎲 OCORRÊNCIA GERAL SURPRESA (DESAFIO)</button>
+        <button class="btn-red" onclick="startScenario('pcr_direct')">🫀 1. PARADA CARDIORRESPIRATÓRIA (PCR & 30:2)</button>
+        <button class="btn-orange" onclick="startScenario('hemo_ext')">🩸 2. ATROPELAMENTO (HEMORRAGIA ARTERIAL)</button>
+        <button class="btn-yellow" onclick="startScenario('hemo_int')">🩹 3. TRAUMA ABDOMINAL (HEMORRAGIA INTERNA)</button>
+        <button class="btn-green" onclick="startScenario('ovace')">🫁 4. ENGASGO GRAVE (OVACE ADULTO)</button>
+        <button class="btn-orange" onclick="startScenario('overdose')">💊 5. OVERDOSE DE OPIÓIDE (NEURO/RESPIRATÓRIO)</button>
+
+        <button class="btn-back" onclick="changeScreen('screen-menu')">↩ Voltar ao Menu</button>
+    </div>
+
+    <!-- TELA 2: ATENDIMENTO SIMULADO EM TEMPO REAL -->
     <div id="screen-simulation" class="screen">
         
         <!-- MONITOR MULTIPARAMÉTRICO -->
@@ -185,14 +249,12 @@ button:active { transform: scale(0.97); background: rgba(0, 240, 255, 0.25); }
             <div class="ecg-line"><div class="ecg-wave" id="m-ecg"></div></div>
         </div>
 
-        <!-- VIEWPORT DO PACIENTE 2D -->
-        <div class="viewport-2d">
-            <div class="dummy" id="dummy-obj">
-                <div class="dummy-head"><span class="dummy-eye" id="d-eyes">👁️👁️</span></div>
-                <div class="dummy-arm" id="d-arm"></div>
-                <div class="dummy-torso" id="d-torso"></div>
-                <div class="dummy-legs"></div>
-                <div class="wound-spot" id="d-wound"></div>
+        <!-- VIEWPORT DO BONECO 3D INTERATIVO -->
+        <div class="viewport-3d-container">
+            <div id="canvas-3d-sim"></div>
+            <div class="viewport-controls">
+                <button class="btn-3d-ctrl" onclick="resetSimCamera()">🎥 RESET CÂMERA</button>
+                <button class="btn-3d-ctrl" onclick="toggleSimXray()">🩻 RAIO-X</button>
             </div>
         </div>
 
@@ -201,17 +263,17 @@ button:active { transform: scale(0.97); background: rgba(0, 240, 255, 0.25); }
 
         <!-- CHAT DE ANAMNESE SAMPLE -->
         <div class="chat-box">
-            <input type="text" class="chat-input" id="chat-txt" placeholder="Digite uma pergunta ao paciente (ex: Dor? Alergia?)...">
+            <input type="text" class="chat-input" id="chat-txt" placeholder="Pergunte à vítima (ex: Dor? Alergia? Medicamentos?)...">
             <button onclick="askPatient()" style="padding:0 8px; margin:0;">PERGUNTAR</button>
         </div>
 
         <!-- ABAS NAVEGÁVEIS -->
         <div class="action-tabs">
-            <button class="tab-btn active" onclick="switchTab('exame')">🔎 EXAME</button>
+            <button class="tab-btn active" onclick="switchTab('exame')">🔎 EXAMES</button>
             <button class="tab-btn" onclick="switchTab('proced')">🛠️ PROCEDIMENTOS</button>
-            <button class="tab-btn" onclick="switchTab('ovace')">🫁 OVACE</button>
+            <button class="tab-btn" onclick="switchTab('pcr')">🫀 RCP (30:2)</button>
             <button class="tab-btn" onclick="switchTab('imobil')">🧱 IMOBILIZAÇÃO</button>
-            <button class="tab-btn" onclick="switchTab('radio')">📻 RÁDIO</button>
+            <button class="tab-btn" onclick="switchTab('radio')">📻 RÁDIO & TRANSPORTE</button>
         </div>
 
         <!-- ABA EXAMES -->
@@ -220,7 +282,9 @@ button:active { transform: scale(0.97); background: rgba(0, 240, 255, 0.25); }
                 <button onclick="doExam('pupila')">👁️ EXAME PUPILAR</button>
                 <button onclick="doExam('pa')">🩸 AFERIR PA MANUAL</button>
                 <button onclick="doExam('oximetro')">🫁 OXÍMETRO DE PULSO</button>
-                <button onclick="doExam('palpacao')">🖐️ PALPAÇÃO PELVE/ABDÔMEN</button>
+                <button onclick="doExam('ausculta')">🎧 AUSCULTA PULMONAR</button>
+                <button onclick="doExam('hgt')">🩸 GLICEMIA (HGT)</button>
+                <button onclick="doExam('palpacao')">🖐️ PALPAÇÃO ABDOMINAL</button>
             </div>
         </div>
 
@@ -229,108 +293,97 @@ button:active { transform: scale(0.97); background: rgba(0, 240, 255, 0.25); }
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 3px;">
                 <button class="btn-red" onclick="doAction('torniquete')">🩸 TORNIQUETE</button>
                 <button class="btn-orange" onclick="doAction('gaze')">🩹 WOUND PACKING</button>
-                <button class="btn-green" onclick="doAction('rcp')">🫀 COMPRESSÃO RCP</button>
-                <button class="btn-yellow" onclick="doAction('dea')">⚡ DEA / CHOQUE</button>
+                <button class="btn-green" onclick="doAction('o2')">🌬️ MÁSCARA DE O2</button>
+                <button class="btn-yellow" onclick="doAction('guedel')">🫁 CÂNULA DE GUEDEL</button>
+                <button class="btn-purple" onclick="doAction('naloxona')">💉 NALOXONA (ANTÍDOTO)</button>
+                <button class="btn-blue" onclick="doAction('dea')">⚡ DEA / AVALIAR CHOQUE</button>
             </div>
         </div>
 
-        <!-- ABA OVACE -->
-        <div id="tab-ovace" class="action-panel">
-            <button class="btn-orange" onclick="doOvace('heimlich')">👊 MANOBRA DE HEIMLICH (CONSCIENTE)</button>
-            <button class="btn-red" onclick="doOvace('ovace_pcr')">🚨 RCP PARA OVACE INCONSCIENTE</button>
+        <!-- ABA PCR REALISTA -->
+        <div id="tab-pcr" class="action-panel">
+            <p style="font-size:10px; color:var(--text-dim);">Ciclos estritos de 30 compressões para 2 ventilações (AHA):</p>
+            <button class="btn-red" style="padding:12px;" onclick="openRcpModal()">🫀 INICIAR PROTOCOLO DE RCP (5 CICLOS 30:2)</button>
+            <button class="btn-yellow" onclick="doAction('dea')">⚡ DEA / AVALIAR RITMO & CHOQUE</button>
         </div>
 
-        <!-- ABA IMOBILIZAÇÃO -->
+        <!-- ABA IMOBILIZAÇÃO SEQUENCIAL -->
         <div id="tab-imobil" class="action-panel">
+            <p style="font-size:10px; color:var(--text-dim);">Siga a sequência correta de pranchamento:</p>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 3px;">
-                <button onclick="doAction('colar')">🦴 COLAR CERVICAL</button>
-                <button onclick="doAction('cinto_pelvico')">⭕ CINTO PÉLVICO</button>
-                <button onclick="doAction('prancha')">🪵 PRANCHA RÁPIDA</button>
-                <button onclick="doAction('manta')">🥼 MANTA TÉRMICA</button>
+                <button onclick="doImobil('colar')">1. COLAR CERVICAL</button>
+                <button onclick="doImobil('rolamento')">2. ROLAMENTO 90° & PRANCHA</button>
+                <button onclick="doImobil('tirantes')">3. TIRANTES DO TRONCO</button>
+                <button onclick="doImobil('headblock')">4. HEAD BLOCK (CABEÇA)</button>
             </div>
         </div>
 
-        <!-- ABA RÁDIO -->
+        <!-- ABA RÁDIO & TRANSPORTE -->
         <div id="tab-radio" class="action-panel">
-            <button class="btn-yellow" onclick="doRadio('mist')">📻 PASSER CASO (MIST) À REGULAÇÃO</button>
-            <button class="btn-green" onclick="doRadio('embarcar')">🚑 EMBARCAR NA AMBULÂNCIA & ECG</button>
+            <button class="btn-yellow" onclick="doRadio('mist')">📻 PASSAGEM DE CASO (MIST) À REGULAÇÃO</button>
+            <button class="btn-green" style="padding:12px;" onclick="transportToHospital()">🚑 EMBARCAR & TRANSPORTAR AO HOSPITAL</button>
         </div>
 
         <button class="btn-back" onclick="exitSimulation()">↩ ABANDONAR OCORRÊNCIA</button>
     </div>
 
-    <!-- TELA 3: ANATOMA E FISIOLOGIA APLICADA -->
+    <!-- TELA 3: ATLAS INTERATIVO DE ANATOMIA 3D (11 SISTEMAS) -->
     <div id="screen-anatomy" class="screen">
-        <h1>🫀 ANATOMIA & FISIOLOGIA APLICADA</h1>
-        <p>Diagramas interativos de estruturas essenciais no APH:</p>
+        <h1>🏛️ ATLAS DE ANATOMIA 3D</h1>
+        <p>Explore os 11 Sistemas do Corpo Humano interativamente:</p>
 
-        <!-- CORAÇÃO -->
-        <div class="anatomy-card">
-            <h3 style="color:var(--accent-red); font-size:12px;">CORAÇÃO & SISTEMA ELÉTRICO (PCR)</h3>
-            <div class="svg-container">
-                <svg width="100" height="100" viewBox="0 0 100 100">
-                    <path d="M 50 30 C 30 10, 10 35, 50 85 C 90 35, 70 10, 50 30 Z" fill="#ff1744" stroke="#ffffff" stroke-width="2"/>
-                    <circle cx="35" cy="35" r="4" fill="#ffd166"/>
-                    <circle cx="50" cy="50" r="4" fill="#ffd166"/>
-                    <line x1="35" y1="35" x2="50" y2="50" stroke="#ffd166" stroke-width="2"/>
-                </svg>
-            </div>
-            <p style="font-size:10px;">• <b>Nó Sinalatrial:</b> Marcapasso natural.<br>• <b>FV (Fibrilação Ventricular):</b> Tremor caótico. O choque do DEA despolariza o nó e organiza o ritmo.</p>
+        <!-- VIEWPORT 3D DO ATLAS -->
+        <div class="viewport-3d-container" style="height:220px;">
+            <div id="canvas-3d-atlas"></div>
         </div>
 
-        <!-- VIAS AÉREAS / OVACE -->
-        <div class="anatomy-card">
-            <h3 style="color:var(--accent-orange); font-size:12px;">VIAS AÉREAS & OBSTRUÇÃO (OVACE)</h3>
-            <div class="svg-container">
-                <svg width="80" height="100" viewBox="0 0 80 100">
-                    <rect x="35" y="10" width="10" height="70" fill="#00f0ff" rx="4"/>
-                    <circle cx="40" cy="45" r="7" fill="#ff1744"/>
-                </svg>
-            </div>
-            <p style="font-size:10px;">• <b>Bloqueio na Traqueia (Vermelho):</b> A Manobra de Heimlich comprime o diafragma, elevando a pressão intratorácica para expelir o objeto.</p>
+        <div class="anatomy-sys-btn">
+            <button class="btn-red" onclick="loadSystem3D('cardio')">🫀 CARDIOVASCULAR</button>
+            <button class="btn-blue" onclick="loadSystem3D('resp')">🫁 RESPIRATÓRIO</button>
+            <button class="btn-purple" onclick="loadSystem3D('nervous')">🧠 NERVOSTO</button>
+            <button class="btn-yellow" onclick="loadSystem3D('skeletal')">🦴 ESQUELÉTICO</button>
+            <button class="btn-orange" onclick="loadSystem3D('muscular')">💪 MUSCULAR</button>
+            <button class="btn-green" onclick="loadSystem3D('digestive')">🥪 DIGESTÓRIO</button>
+            <button onclick="loadSystem3D('urinary')">🚽 URINÁRIO</button>
+            <button onclick="loadSystem3D('endocrine')">🧪 ENDÓCRINO</button>
+            <button onclick="loadSystem3D('lymph')">🩸 LINFÁTICO</button>
+            <button onclick="loadSystem3D('integumentary')">🛡️ TEGUMENTAR</button>
+            <button onclick="loadSystem3D('repro')">🧬 REPRODUTOR</button>
+        </div>
+
+        <div class="sys-info-box" id="sys-desc">
+            <b>Selecione um sistema acima</b> para visualizar seus órgãos no modelo 3D e entender sua fisiologia e aplicação no APH.
         </div>
 
         <button class="btn-back" onclick="changeScreen('screen-menu')">↩ Voltar ao Menu</button>
     </div>
 
-    <!-- TELA 4: CÓDIGOS DE COMUNICAÇÃO EXPANDIDOS -->
+    <!-- TELA 4: CÓDIGOS DE COMUNICAÇÃO -->
     <div id="screen-radio" class="screen">
         <h1>📻 CÓDIGOS DE COMUNICAÇÃO APH</h1>
-        <p>Guia completo de rádio de emergência e despacho:</p>
 
-        <!-- CÓDIGO Q -->
         <div class="code-section">
             <h3>📡 CÓDIGO Q (RADIOFONIA)</h3>
-            <b>QAP:</b> Na escuta / Atento na frequência<br>
-            <b>QTH:</b> Localização / Endereço da ocorrência<br>
-            <b>QSL:</b> Entendido / Compreendido / Ciente<br>
-            <b>QTA:</b> Cancelar missão / Abortar ação<br>
-            <b>QRT:</b> Encerrar transmissões / Fora do ar<br>
-            <b>QRV:</b> À disposição / Pronto para atendimento<br>
-            <b>QRA:</b> Nome do socorrista ou operador<br>
-            <b>QTR:</b> Horário exato<br>
-            <b>QRM:</b> Interferência ou ruído na transmissão<br>
-            <b>QSY:</b> Mudar de frequência / canal de rádio<br>
-            <b>QSO:</b> Contato direto entre viaturas
+            <b>QAP:</b> Na escuta / Atento | <b>QTH:</b> Localização<br>
+            <b>QSL:</b> Entendido | <b>QTA:</b> Cancelar missão<br>
+            <b>QRT:</b> Fora do ar | <b>QRV:</b> À disposição<br>
+            <b>QRA:</b> Nome do operador | <b>QSY:</b> Mudar canal
         </div>
 
-        <!-- CÓDIGOS OPERACIONAIS -->
         <div class="code-section" style="border-color: var(--accent-yellow);">
             <h3 style="color: var(--accent-yellow);">🚨 CÓDIGOS OPERACIONAIS DE VIATURA</h3>
-            <b>Código 1:</b> Deslocamento normal (Sem prioridade)<br>
-            <b>Código 3:</b> Deslocamento de emergência (Sirene/Giroflex)<br>
-            <b>Código 4:</b> Situação sob controle na cena<br>
-            <b>Código 5:</b> Deslocamento da viatura ao hospital<br>
-            <b>Código 0:</b> Apoio policial emergencial (Risco à equipe)
+            <b>Código 1:</b> Deslocamento Normal (Sem prioridade)<br>
+            <b>Código 3:</b> Emergência Grave (Sirene / Giroflex)<br>
+            <b>Código 4:</b> Cena Sob Controle<br>
+            <b>Código 0:</b> Apoio Policial Imediato (Risco à equipe)
         </div>
 
-        <!-- TRIAGEM DE GRAVIDADE -->
         <div class="code-section" style="border-color: var(--accent-red);">
-            <h3 style="color: var(--accent-red);">🔴 CÓDIGOS DE GRAVIDADE / TRIAGEM</h3>
-            <span style="color:var(--accent-green);">● <b>Código Verde:</b></span> Vítima leve / Estável<br>
-            <span style="color:var(--accent-yellow);">● <b>Código Amarelo:</b></span> Urgente / Moderado (Risco potencial)<br>
-            <span style="color:var(--accent-red);">● <b>Código Vermelho:</b></span> Gravíssimo (Risco iminente de morte)<br>
-            <span style="color:#aaa;">● <b>Código Preto:</b></span> Óbito confirmado no local
+            <h3 style="color: var(--accent-red);">🔴 TRIAGEM DE GRAVIDADE (START)</h3>
+            <span style="color:var(--accent-green);">● <b>Verde:</b></span> Leve / Estável<br>
+            <span style="color:var(--accent-yellow);">● <b>Amarelo:</b></span> Urgente (Moderado)<br>
+            <span style="color:var(--accent-red);">● <b>Vermelho:</b></span> Gravíssimo (Risco Morte)<br>
+            <span style="color:#aaa;">● <b>Preto:</b></span> Óbito Confirmado
         </div>
 
         <button class="btn-back" onclick="changeScreen('screen-menu')">↩ Voltar ao Menu</button>
@@ -339,17 +392,40 @@ button:active { transform: scale(0.97); background: rgba(0, 240, 255, 0.25); }
 </div>
 
 <script>
+/* -------------------------------------------------------------------------- */
+/* GLOBAL VARIABLES & PHYSIOLOGICAL STATE */
+/* -------------------------------------------------------------------------- */
 let simTimer = null;
 let secondsElapsed = 0;
 let currentScenario = null;
+
 let pState = {
     fc: 80, paPas: 120, paPad: 80, spo2: 98, fr: 16, gli: 95, temp: 36.5,
-    isPcr: false, bleedRate: 0, ovaceBlocked: false, pupilType: 'isocoric'
+    isPcr: false, bleedRate: 0, ovaceBlocked: false, isOverdose: false,
+    imobilStage: 0
 };
 
+/* RCP Variables */
+let rcpCompressions = 0;
+let rcpVentilations = 0;
+let rcpCycle = 1;
+
+/* Three.js Variables */
+let simScene, simCamera, simRenderer, simBody;
+let atlasScene, atlasCamera, atlasRenderer, atlasBodyMesh;
+
+/* -------------------------------------------------------------------------- */
+/* SCREEN NAVIGATION & UTILS */
+/* -------------------------------------------------------------------------- */
 function changeScreen(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
+    
+    if(id === 'screen-simulation') {
+        setTimeout(initSim3D, 100);
+    } else if(id === 'screen-anatomy') {
+        setTimeout(initAtlas3D, 100);
+    }
 }
 
 function switchTab(tabId) {
@@ -359,52 +435,190 @@ function switchTab(tabId) {
     document.getElementById('tab-' + tabId).classList.add('active');
 }
 
+function updateFeedback(msg) { document.getElementById("sim-feedback").innerHTML = msg; }
+
+function formatTime(s) {
+    const mins = Math.floor(s / 60).toString().padStart(2, '0');
+    const secs = (s % 60).toString().padStart(2, '0');
+    return `${mins}:${secs}`;
+}
+
+/* -------------------------------------------------------------------------- */
+/* THREE.JS 3D ENGINE (SIMULATOR & ATLAS) */
+/* -------------------------------------------------------------------------- */
+function initSim3D() {
+    const container = document.getElementById('canvas-3d-sim');
+    if(!container || container.children.length > 0) return;
+
+    simScene = new THREE.Scene();
+    simScene.background = new THREE.Color(0x040810);
+
+    simCamera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+    simCamera.position.set(0, 1.2, 3.2);
+
+    simRenderer = new THREE.WebGLRenderer({ antialias: true });
+    simRenderer.setSize(container.clientWidth, container.clientHeight);
+    container.appendChild(simRenderer.domElement);
+
+    const light = new THREE.DirectionalLight(0xffffff, 1);
+    light.position.set(2, 4, 3);
+    simScene.add(light);
+    simScene.add(new THREE.AmbientLight(0x404040, 1.5));
+
+    // Create Dummy Human Body (Stylized 3D)
+    const bodyGroup = new THREE.Group();
+    
+    // Head
+    const headGeo = new THREE.SphereGeometry(0.2, 16, 16);
+    const headMat = new THREE.MeshPhongMaterial({ color: 0xffcc99 });
+    const head = new THREE.Mesh(headGeo, headMat);
+    head.position.y = 0.7;
+    bodyGroup.add(head);
+
+    // Torso
+    const torsoGeo = new THREE.CylinderGeometry(0.25, 0.2, 0.7, 16);
+    const torsoMat = new THREE.MeshPhongMaterial({ color: 0x1f618d });
+    const torso = new THREE.Mesh(torsoGeo, torsoMat);
+    torso.position.y = 0.15;
+    bodyGroup.add(torso);
+
+    // Limbs
+    const legGeo = new THREE.CylinderGeometry(0.08, 0.06, 0.7, 16);
+    const legMat = new THREE.MeshPhongMaterial({ color: 0x2c3e50 });
+    const leg1 = new THREE.Mesh(legGeo, legMat); leg1.position.set(-0.12, -0.5, 0);
+    const leg2 = new THREE.Mesh(legGeo, legMat); leg2.position.set(0.12, -0.5, 0);
+    bodyGroup.add(leg1); bodyGroup.add(leg2);
+
+    simBody = bodyGroup;
+    simScene.add(simBody);
+
+    function animateSim() {
+        requestAnimationFrame(animateSim);
+        if(simBody) simBody.rotation.y += 0.003;
+        simRenderer.render(simScene, simCamera);
+    }
+    animateSim();
+}
+
+function resetSimCamera() { if(simCamera) simCamera.position.set(0, 1.2, 3.2); }
+function toggleSimXray() {
+    if(simBody) {
+        simBody.traverse((child) => {
+            if(child.isMesh) {
+                child.material.wireframe = !child.material.wireframe;
+            }
+        });
+    }
+}
+
+function initAtlas3D() {
+    const container = document.getElementById('canvas-3d-atlas');
+    if(!container || container.children.length > 0) return;
+
+    atlasScene = new THREE.Scene();
+    atlasScene.background = new THREE.Color(0x060c18);
+
+    atlasCamera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+    atlasCamera.position.set(0, 0.5, 2.8);
+
+    atlasRenderer = new THREE.WebGLRenderer({ antialias: true });
+    atlasRenderer.setSize(container.clientWidth, container.clientHeight);
+    container.appendChild(atlasRenderer.domElement);
+
+    const light = new THREE.DirectionalLight(0x00f0ff, 1.2);
+    light.position.set(2, 3, 2);
+    atlasScene.add(light);
+    atlasScene.add(new THREE.AmbientLight(0xffffff, 0.8));
+
+    const geo = new THREE.TorusKnotGeometry(0.4, 0.15, 64, 16);
+    const mat = new THREE.MeshPhongMaterial({ color: 0x00f0ff, wireframe: true });
+    atlasBodyMesh = new THREE.Mesh(geo, mat);
+    atlasScene.add(atlasBodyMesh);
+
+    function animateAtlas() {
+        requestAnimationFrame(animateAtlas);
+        if(atlasBodyMesh) {
+            atlasBodyMesh.rotation.x += 0.005;
+            atlasBodyMesh.rotation.y += 0.008;
+        }
+        atlasRenderer.render(atlasScene, atlasCamera);
+    }
+    animateAtlas();
+}
+
+/* -------------------------------------------------------------------------- */
+/* ATLAS DE ANATOMIA - LOAD SYSTEMS */
+/* -------------------------------------------------------------------------- */
+const sysData = {
+    cardio: { title: "🫀 SISTEMA CARDIOVASCULAR", desc: "Composto pelo Coração, Artérias e Veias. No APH, monitora-se a perfusão e ritmos de PCR (FV/TV/Assistolia).", color: 0xff1744 },
+    resp: { title: "🫁 SISTEMA RESPIRATÓRIO", desc: "Traqueia, Brônquios e Pulmões. Responsável pela troca gasosa (O2/CO2). Atenção total ao OVACE e Pneumotórax.", color: 0x00f0ff },
+    nervous: { title: "🧠 SISTEMA NERVOSTO", desc: "Encéfalo e Medula Espinhal. Avaliado pela Escala de Glasgow e reatividade pupilar à luz.", color: 0xb388ff },
+    skeletal: { title: "🦴 SISTEMA ESQUELÉTICO", desc: "206 Ossos. Protege órgãos vitais. Exige protocolo estrito de imobilização na prancha rígida.", color: 0xffd166 },
+    muscular: { title: "💪 SISTEMA MUSCULAR", desc: "Sustentação e movimento. Risco de Síndrome de Esmagamento (Crush) em traumas estruturais.", color: 0xff9100 },
+    digestive: { title: "🥪 SISTEMA DIGESTÓRIO", desc: "Órgãos abdominais. Atenção para rigidez ('abdômen em tábua') que indica sangramento interno grave.", color: 0x00e676 },
+    urinary: { title: "🚽 SISTEMA URINÁRIO", desc: "Rins e Bexiga. Perfusão renal é indicador chave de choque hemodinâmico estendido.", color: 0x29b6f6 },
+    endocrine: { title: "🧪 SISTEMA ENDÓCRINO", desc: "Glândulas e Hormônios. Crítico no manejo de crises hipoglicêmicas e descarga de Adrenalina.", color: 0xab47bc },
+    lymph: { title: "🩸 SISTEMA LINFÁTICO", desc: "Defesa imunitária. Atuação direta no choque anafilático severo por alergias.", color: 0xef5350 },
+    integumentary: { title: "🛡️ SISTEMA TEGUMENTAR", desc: "Pele. Avalia-se Cianose (azul), Palidez e Enchimento Capilar no diagnóstico imediato.", color: 0x8d6e63 },
+    repro: { title: "🧬 SISTEMA REPRODUTOR", desc: "Emergências obstétricas, parto iminente no APH e descompressão de veia cava em gestantes.", color: 0xec407a }
+};
+
+function loadSystem3D(sysKey) {
+    const data = sysData[sysKey];
+    if(!data) return;
+
+    document.getElementById("sys-desc").innerHTML = `<b>${data.title}</b><br>${data.desc}`;
+    if(atlasBodyMesh) {
+        atlasBodyMesh.material.color.setHex(data.color);
+    }
+}
+
+/* -------------------------------------------------------------------------- */
+/* SIMULADOR DE OCORRÊNCIAS & LÓGICA FISIOLÓGICA */
+/* -------------------------------------------------------------------------- */
 function startRandomScenario() {
-    const scenarios = ['ovace', 'hemo_int', 'hemo_ext', 'pcr_direct', 'overdose'];
-    const chosen = scenarios[Math.floor(Math.random() * scenarios.length)];
+    const scens = ['ovace', 'hemo_int', 'hemo_ext', 'pcr_direct', 'overdose'];
+    const chosen = scens[Math.floor(Math.random() * scens.length)];
     startScenario(chosen, true);
 }
 
 function startScenario(type, isRandom = false) {
     currentScenario = type;
     secondsElapsed = 0;
+    pState.imobilStage = 0;
     changeScreen('screen-simulation');
-    
+
     pState.fc = 80; pState.paPas = 120; pState.paPad = 80;
     pState.spo2 = 98; pState.fr = 16; pState.gli = 95; pState.temp = 36.5;
-    pState.isPcr = false; pState.bleedRate = 0; pState.ovaceBlocked = false;
-    document.getElementById("d-wound").style.display = "none";
+    pState.isPcr = false; pState.bleedRate = 0; pState.ovaceBlocked = false; pState.isOverdose = false;
     document.getElementById("m-ecg").className = "ecg-wave";
-    
+
     if(isRandom) {
         document.getElementById("top-loc").innerHTML = "GPS: OCORRÊNCIA SURPRESA";
-        updateFeedback("🚨 CHAMADO DE EMERGÊNCIA SURPRESA! Avalie os sinais vitais e o paciente imediatamente!");
+        updateFeedback("🚨 CHAMADO SURPRESA! Avalie o paciente e identifique a emergência!");
     }
 
     if(type === 'ovace') {
         if(!isRandom) document.getElementById("top-loc").innerHTML = "GPS: RESTAURANTE";
-        pState.fr = 0; pState.spo2 = 82; pState.fc = 115; pState.ovaceBlocked = true;
-        if(!isRandom) updateFeedback("Vítima com as mãos no pescoço (sinal universal de engasgo)! Apneia total.");
+        pState.fr = 0; pState.spo2 = 80; pState.fc = 118; pState.ovaceBlocked = true;
+        if(!isRandom) updateFeedback("Vítima agitando as mãos no pescoço! Apneia por engasgo grave.");
     } else if(type === 'hemo_int') {
         if(!isRandom) document.getElementById("top-loc").innerHTML = "GPS: RODOVIA KM 42";
         pState.bleedRate = 2;
-        if(!isRandom) updateFeedback("Vítima contundida com dores fortes no abdômen após impacto de cinto!");
+        if(!isRandom) updateFeedback("Trauma contuso grave após colisão. Dores fortes no abdômen!");
     } else if(type === 'hemo_ext') {
         if(!isRandom) document.getElementById("top-loc").innerHTML = "GPS: AV. CENTRAL";
-        document.getElementById("d-wound").style.display = "block";
-        document.getElementById("d-wound").style.left = "85px";
-        document.getElementById("d-wound").style.top = "15px";
         pState.bleedRate = 4;
-        if(!isRandom) updateFeedback("Atropelamento! Sangramento arterial jorrante na coxa do paciente!");
+        if(!isRandom) updateFeedback("Atropelamento! Sangramento arterial jorrante na coxa direita!");
     } else if(type === 'pcr_direct') {
         if(!isRandom) document.getElementById("top-loc").innerHTML = "GPS: PRAÇA PÚBLICA";
         pState.isPcr = true; pState.fc = 0; pState.paPas = 0; pState.paPad = 0; pState.spo2 = 0; pState.fr = 0;
         document.getElementById("m-ecg").className = "ecg-wave ecg-flat";
-        if(!isRandom) updateFeedback("Vítima caída, irresponsiva e em apneia! Inicie RCP!");
+        if(!isRandom) updateFeedback("Vítima caída, inconsciente e sem pulso! Inicie protocolo de RCP!");
     } else if(type === 'overdose') {
         if(!isRandom) document.getElementById("top-loc").innerHTML = "GPS: CASA NOTURNA";
-        pState.fr = 6; pState.spo2 = 85; pState.fc = 50;
-        if(!isRandom) updateFeedback("Jovem desacordado no banheiro. Respiração bradipneica e lentificada.");
+        pState.fr = 5; pState.spo2 = 82; pState.fc = 48; pState.isOverdose = true;
+        if(!isRandom) updateFeedback("Jovem inconsciente. Pupilas mióticas (pontiformes) e bradipneia.");
     }
 
     startPhysiologicalLoop();
@@ -415,23 +629,23 @@ function startPhysiologicalLoop() {
     simTimer = setInterval(() => {
         secondsElapsed++;
         document.getElementById("top-timer").innerHTML = formatTime(secondsElapsed);
-        
+
         if(pState.bleedRate > 0) {
             pState.paPas -= pState.bleedRate * 0.8;
             pState.paPad -= pState.bleedRate * 0.5;
             pState.fc += pState.bleedRate * 1.2;
-            pState.spo2 -= 0.5;
-            if(pState.paPas < 60 && !pState.isPcr) {
+            pState.spo2 -= 0.4;
+            if(pState.paPas < 55 && !pState.isPcr) {
                 pState.isPcr = true;
-                updateFeedback("🚨 ALERTA: Choque Hipovolêmico grave evoluiu para PARADA CARDIORRESPIRATÓRIA!");
+                updateFeedback("🚨 ALERTA: Choque Hipovolêmico severo evoluiu para PARADA CARDIORRESPIRATÓRIA!");
             }
         }
 
         if(pState.ovaceBlocked) {
             pState.spo2 -= 1.2; pState.fc += 1.5;
-            if(pState.spo2 < 50 && !pState.isPcr) {
+            if(pState.spo2 < 45 && !pState.isPcr) {
                 pState.isPcr = true;
-                updateFeedback("🚨 ALERTA: Asfixia prolongada levou a paciente à PARADA CARDIORRESPIRATÓRIA!");
+                updateFeedback("🚨 ALERTA: Asfixia por OVACE levou a paciente à PARADA CARDIORRESPIRATÓRIA!");
             }
         }
 
@@ -458,7 +672,140 @@ function updateMonitorDisplay() {
     document.getElementById("m-temp").innerHTML = pState.temp.toFixed(1);
 }
 
-function updateFeedback(msg) { document.getElementById("sim-feedback").innerHTML = msg; }
+/* -------------------------------------------------------------------------- */
+/* EXAMES & PROCEDIMENTOS */
+/* -------------------------------------------------------------------------- */
+function doExam(type) {
+    if(type === 'pupila') {
+        if(pState.isOverdose) updateFeedback("👁️ PUPILAS: Mióticas (Pontiformes) e fotorreativas lentas.");
+        else updateFeedback("👁️ PUPILAS: Isocóricas e reagentes à luz.");
+    } else if(type === 'pa') updateFeedback(`🩸 PA MANUAL: ${pState.paPas}x${pState.paPad} mmHg.`);
+    else if(type === 'oximetro') updateFeedback(`🫁 OXÍMETRO: Saturação em ${pState.spo2}%.`);
+    else if(type === 'ausculta') {
+        if(pState.ovaceBlocked) updateFeedback("🎧 AUSCULTA: Murmúrio vesicular abolido bilateralmente (Sem fluxo)!");
+        else updateFeedback("🎧 AUSCULTA: Murmúrio vesicular presente sem ruídos adventícios.");
+    } else if(type === 'hgt') updateFeedback(`🩸 GLICEMIA CAPILAR: ${pState.gli} mg/dL (Normoglicêmico).`);
+    else if(type === 'palpacao') {
+        if(currentScenario === 'hemo_int') updateFeedback("🖐️ PALPAÇÃO: Rigidez muscular severa ('Abdômen em Tábua')!");
+        else updateFeedback("🖐️ PALPAÇÃO: Abdômen flácido e indolor.");
+    }
+}
+
+function doAction(act) {
+    if(act === 'torniquete' && currentScenario === 'hemo_ext' && pState.bleedRate > 0) {
+        pState.bleedRate = 0;
+        updateFeedback("🟢 TORNIQUETE APLICADO! Sangramento arterial estancado com sucesso.");
+    } else if(act === 'gaze' && currentScenario === 'hemo_ext') {
+        pState.bleedRate = Math.max(0, pState.bleedRate - 2);
+        updateFeedback("🩹 WOUND PACKING: Preenchimento com gaze hemostática realizado.");
+    } else if(act === 'o2') {
+        pState.spo2 = Math.min(100, pState.spo2 + 10);
+        updateFeedback("🌬️ O2 OFERECIDO: Máscara com reservatório conectada a 15 L/min.");
+    } else if(act === 'guedel') {
+        if(pState.ovaceBlocked) {
+            pState.ovaceBlocked = false; pState.fr = 16; pState.spo2 = 94;
+            updateFeedback("🟢 CÂNULA DE GUEDEL & DESOBSTRUÇÃO: Objeto removido! Vítima voltou a respirar.");
+        } else {
+            updateFeedback("🫁 CÂNULA DE GUEDEL: Via aérea pérvia mantida.");
+        }
+    } else if(act === 'naloxona' && pState.isOverdose) {
+        pState.fr = 14; pState.spo2 = 96; pState.fc = 75;
+        updateFeedback("💉 NALOXONA ADMINISTRADA: Reversão de depressão respiratória por opióide!");
+    } else if(act === 'dea') {
+        if(pState.isPcr) {
+            updateFeedback("⚡ DEA: Analisando ritmo... Ritmo Chocável (FV)! Choque recomendado!");
+        } else {
+            updateFeedback("⚡ DEA: Ritmo Sinusal regular. Choque NÃO recomendado.");
+        }
+    }
+}
+
+function doImobil(step) {
+    if(step === 'colar' && pState.imobilStage === 0) {
+        pState.imobilStage = 1; updateFeedback("🦴 PASSO 1: Colar cervical ajustado e aplicado.");
+    } else if(step === 'rolamento' && pState.imobilStage === 1) {
+        pState.imobilStage = 2; updateFeedback("🪵 PASSO 2: Rolamento em bloco 90° e centralização na prancha.");
+    } else if(step === 'tirantes' && pState.imobilStage === 2) {
+        pState.imobilStage = 3; updateFeedback("🧱 PASSO 3: Tirantes do tronco e membros fixados firmemente.");
+    } else if(step === 'headblock' && pState.imobilStage === 3) {
+        pState.imobilStage = 4; updateFeedback("🟢 PASSO 4: Head Block instalado! Imobilização concluída com sucesso.");
+    } else {
+        updateFeedback("⚠️ ATENÇÃO: Siga a ordem estrita de imobilização (Colar -> Rolamento -> Tirantes -> Head Block)!");
+    }
+}
+
+/* -------------------------------------------------------------------------- */
+/* PROTOCOLO RCP REALISTA 30:2 x 5 */
+/* -------------------------------------------------------------------------- */
+function openRcpModal() {
+    document.getElementById("rcp-modal").style.display = "flex";
+    rcpCompressions = 0; rcpVentilations = 0; rcpCycle = 1;
+    updateRcpUI();
+}
+
+function closeRcpModal() { document.getElementById("rcp-modal").style.display = "none"; }
+
+function pressRcpCompress() {
+    if(rcpCompressions < 30) {
+        rcpCompressions++;
+        document.getElementById("rcp-num").innerHTML = `${rcpCompressions.toString().padStart(2, '0')} / 30`;
+        if(rcpCompressions === 30) {
+            document.getElementById("btn-ambu").disabled = false;
+            document.getElementById("rcp-instruction").innerHTML = "30 Compressões feitas! Aplique 2 Ventilações no Ambu!";
+        }
+    }
+}
+
+function pressRcpVentilate() {
+    if(rcpCompressions >= 30 && rcpVentilations < 2) {
+        rcpVentilations++;
+        document.getElementById("rcp-instruction").innerHTML = `Ventilação ${rcpVentilations} / 2 aplicada.`;
+        if(rcpVentilations === 2) {
+            if(rcpCycle < 5) {
+                rcpCycle++;
+                rcpCompressions = 0; rcpVentilations = 0;
+                document.getElementById("btn-ambu").disabled = true;
+                updateRcpUI();
+            } else {
+                // Concluiu os 5 ciclos
+                closeRcpModal();
+                if(pState.isPcr && pState.bleedRate === 0 && !pState.ovaceBlocked) {
+                    pState.isPcr = false; pState.fc = 76; pState.paPas = 110; pState.paPad = 70; pState.spo2 = 92; pState.fr = 14;
+                    document.getElementById("m-ecg").className = "ecg-wave";
+                    updateFeedback("🎉 REANIMAÇÃO SUCESSO! Retorno da Circulação Espontânea (RCE) após 5 ciclos de RCP!");
+                } else {
+                    updateFeedback("⚡ 5 CICLOS CONCLUÍDOS: Vítima mantém-se em PCR. Trate a causa raiz (Hemorragia/OVACE) e aplique novo choque!");
+                }
+            }
+        }
+    }
+}
+
+function updateRcpUI() {
+    document.getElementById("rcp-cycle-txt").innerHTML = `CICLO ${rcpCycle} / 5`;
+    document.getElementById("rcp-num").innerHTML = "00 / 30";
+    document.getElementById("rcp-instruction").innerHTML = "Pressione COMPRIMIR no ritmo de 100-120 BPM!";
+}
+
+/* -------------------------------------------------------------------------- */
+/* RÁDIO, TRANSPORTE & AMBULÂNCIA */
+/* -------------------------------------------------------------------------- */
+function doRadio(act) {
+    if(act === 'mist') updateFeedback("📻 REGULAÇÃO: MIST repassado ao Médico Regulador.");
+}
+
+function transportToHospital() {
+    const overlay = document.getElementById("amb-overlay");
+    overlay.style.display = "flex";
+    document.getElementById("amb-title").innerHTML = "TRANSPORTANDO PACIENTE...";
+    document.getElementById("amb-subtitle").innerHTML = "Deslocamento de emergência até a Sala Vermelha do Hospital";
+
+    setTimeout(() => {
+        overlay.style.display = "none";
+        exitSimulation();
+        alert("🏥 PACIENTE ENTREGUE NA SALA VERMELHA!\n\nRelatório de Atendimento:\n- Estabilidade ao chegar: " + (pState.isPcr ? "ÓBITO/PCR" : "ESTÁVEL / RCE") + "\n- Tempo Total: " + formatTime(secondsElapsed));
+    }, 3500);
+}
 
 function askPatient() {
     const input = document.getElementById("chat-txt");
@@ -468,68 +815,27 @@ function askPatient() {
     if(pState.isPcr || pState.spo2 < 60) {
         updateFeedback("💬 PACIENTE: (Inconsciente / Sem resposta)");
     } else if(pState.ovaceBlocked) {
-        updateFeedback("💬 PACIENTE: (Gesticula no pescoço desespero, sem som!)");
+        updateFeedback("💬 PACIENTE: (Gesticula desespero no pescoço, sem som!)");
     } else {
-        if(txt.includes("dor") || txt.includes("sente")) updateFeedback("💬 PACIENTE: 'Sinto muita dor no peito e barriga...'");
-        else if(txt.includes("remédio")) updateFeedback("💬 PACIENTE: 'Tomo remédio de pressão.'");
-        else updateFeedback("💬 PACIENTE: 'Por favor me ajude!'");
+        if(txt.includes("dor") || txt.includes("sente")) updateFeedback("💬 PACIENTE: 'Muita dor... me ajude por favor!'");
+        else if(txt.includes("remed") || txt.includes("alergia")) updateFeedback("💬 PACIENTE: 'Tenho pressão alta e tomo remédios.'");
+        else updateFeedback("💬 PACIENTE: 'Por favor, não me deixe morrer!'");
     }
     input.value = "";
-}
-
-function doExam(type) {
-    if(type === 'pa') updateFeedback(`🩸 PA MANUAL: ${pState.paPas}x${pState.paPad} mmHg.`);
-    else if(type === 'oximetro') updateFeedback(`🫁 OXÍMETRO: Saturação ${pState.spo2}%.`);
-    else if(type === 'palpacao') {
-        if(currentScenario === 'hemo_int') updateFeedback("🖐️ PALPAÇÃO: Rigidez abdominal ('Abdômen em Tábua')!");
-        else updateFeedback("🖐️ PALPAÇÃO: Sem rigidez relevante.");
-    }
-}
-
-function doOvace(method) {
-    if(method === 'heimlich' && pState.ovaceBlocked && !pState.isPcr) {
-        pState.ovaceBlocked = false; pState.fr = 18; pState.spo2 = 96;
-        updateFeedback("🟢 HEIMLICH SUCESSO! Objeto expelido! Vítima respirando!");
-    } else if(method === 'ovace_pcr' && pState.ovaceBlocked && pState.isPcr) {
-        pState.ovaceBlocked = false; pState.isPcr = false; pState.fc = 75; pState.paPas = 110; pState.spo2 = 90;
-        document.getElementById("m-ecg").className = "ecg-wave";
-        updateFeedback("⚡ RCP OVACE: Objeto desobstruído durante as compressões! Pulso retornado!");
-    }
-}
-
-function doAction(act) {
-    if(act === 'torniquete' && pState.bleedRate > 0 && currentScenario === 'hemo_ext') {
-        pState.bleedRate = 0; document.getElementById("d-wound").style.display = "none";
-        updateFeedback("🟢 TORNIQUETE APLICADO! Sangramento estancado.");
-    } else if(act === 'rcp' && pState.isPcr) {
-        pState.fc = 80; pState.paPas = 90;
-        updateFeedback("🫀 COMPRESSÕES: Perfusão mantida.");
-    } else if(act === 'dea' && pState.isPcr) {
-        pState.isPcr = false; pState.fc = 72; pState.paPas = 110; pState.spo2 = 92;
-        document.getElementById("m-ecg").className = "ecg-wave";
-        updateFeedback("⚡ CHOQUE DEA DISPARADO! Ritmo Sinusal restabelecido!");
-    } else if(act === 'cinto_pelvico' && currentScenario === 'hemo_int') {
-        pState.bleedRate = 0;
-        updateFeedback("🟢 CINTO PÉLVICO: Hemorragia interna estancada!");
-    }
-}
-
-function doRadio(act) {
-    if(act === 'mist') updateFeedback("📻 REGULAÇÃO MIST: Dados repassados com sucesso!");
-    else if(act === 'embarcar') updateFeedback("🚑 EMBARCADO: Monitorização continuada ativada!");
 }
 
 function exitSimulation() {
     if(simTimer) clearInterval(simTimer);
     changeScreen('screen-menu');
 }
-
-function formatTime(s) {
-    const mins = Math.floor(s / 60).toString().padStart(2, '0');
-    const secs = (s % 60).toString().padStart(2, '0');
-    return `${mins}:${secs}`;
-}
 </script>
 
 </body>
 </html>
+"""
+
+output_path = "index.html"
+with open(output_path, "w", encoding="utf-8") as f:
+    f.write(html_code)
+
+print(f"Arquivo {output_path} gerado com sucesso!")
