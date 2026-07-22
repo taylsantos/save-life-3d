@@ -7,7 +7,6 @@
 
 <!-- Importação de bibliotecas para 3D (Three.js) e Ícones -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
@@ -110,19 +109,21 @@ button:active { transform: scale(0.97); }
 
 /* VIEWPORT DO BONECO 3D */
 .viewport-3d-container {
-    position: relative; width: 100%; height: 200px; background: #040810;
+    position: relative; width: 100%; height: 180px; background: #040810;
     border-radius: 12px; border: 1.5px solid #1d2d3e; overflow: hidden; margin-bottom: 6px;
+    display: flex; align-items: center; justify-content: center;
 }
-#canvas-3d { width: 100%; height: 100%; }
+.viewport-3d-container canvas { width: 100% !important; height: 100% !important; display: block; }
+
 .viewport-controls {
     position: absolute; bottom: 6px; right: 6px; display: flex; gap: 4px; z-index: 5;
 }
-.btn-3d-ctrl { padding: 4px 8px; font-size: 9px; background: rgba(0,0,0,0.7); border: 1px solid var(--accent-blue); color: #fff; border-radius: 4px; }
+.btn-3d-ctrl { padding: 4px 8px; font-size: 9px; background: rgba(0,0,0,0.8); border: 1px solid var(--accent-blue); color: #fff; border-radius: 4px; }
 
-/* TABS E NAVEGAÇÃO */
-.action-tabs { display: flex; gap: 3px; overflow-x: auto; margin-bottom: 6px; padding-bottom: 2px; }
-.tab-btn { padding: 6px 10px; font-size: 9px; white-space: nowrap; flex: none; border-radius: 6px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--text-dim); }
-.tab-btn.active { background: var(--accent-blue); color: #000; font-weight: bold; border-color: var(--accent-blue); }
+/* TABS E NAVEGAÇÃO SUPERIOR FIXA */
+.action-tabs { display: flex; gap: 4px; overflow-x: auto; margin-bottom: 6px; padding-bottom: 4px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.tab-btn { padding: 8px 10px; font-size: 10px; white-space: nowrap; flex: 1; border-radius: 6px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); color: var(--text-dim); }
+.tab-btn.active { background: var(--accent-blue); color: #000; font-weight: bold; border-color: var(--accent-blue); box-shadow: 0 0 10px rgba(0,240,255,0.4); }
 
 .action-panel { display: none; flex-direction: column; gap: 4px; }
 .action-panel.active { display: flex; }
@@ -143,9 +144,11 @@ button:active { transform: scale(0.97); }
 .siren-lights { width: 100%; height: 6px; background: linear-gradient(90deg, red, blue, red, blue); animation: sirenFlash 0.3s infinite; margin-bottom: 15px; }
 @keyframes sirenFlash { 0% { opacity: 0.2; } 100% { opacity: 1; } }
 
-/* PAINEL DE ANATOMIA */
+/* PAINEL DE ANATOMIA DETALHADO */
 .anatomy-sys-btn { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-bottom: 8px; }
-.sys-info-box { background: rgba(0,240,255,0.05); border: 1px solid var(--accent-blue); border-radius: 8px; padding: 10px; font-size: 11px; line-height: 1.4; margin-top: 6px; text-align: left; }
+.sys-info-box { background: rgba(0,240,255,0.05); border: 1px solid var(--accent-blue); border-radius: 8px; padding: 12px; font-size: 11px; line-height: 1.5; margin-top: 6px; text-align: left; max-height: 200px; overflow-y: auto; }
+.sys-title { color: var(--accent-blue); font-size: 13px; font-weight: bold; margin-bottom: 6px; text-transform: uppercase; }
+.sys-subtitle { color: var(--accent-yellow); font-weight: bold; margin-top: 6px; }
 
 .code-section { background: rgba(0,0,0,0.3); padding: 8px; border-radius: 6px; margin-bottom: 6px; border-left: 3px solid var(--accent-blue); font-size: 10px; text-align: left; }
 .code-section h3 { font-size: 11px; color: var(--accent-blue); margin-bottom: 4px; text-transform: uppercase; }
@@ -205,13 +208,13 @@ button:active { transform: scale(0.97); }
 
         <h2>MÓDULOS PRINCIPAIS:</h2>
         <button class="btn-purple" style="padding:12px;" onclick="changeScreen('screen-sim-select')">
-            <i class="fa-solid fa-truck-medical"></i> 🚨 1. SIMULADOR APH (OCORRÊNCIAS & PRÁTICA)
+            🚨 1. SIMULADOR APH (OCORRÊNCIAS & PRÁTICA)
         </button>
         <button class="btn-yellow" style="padding:12px;" onclick="changeScreen('screen-anatomy')">
-            <i class="fa-solid fa-bone"></i> 🏛️ 2. ATLAS INTERATIVO DE ANATOMIA 3D (11 SISTEMAS)
+            🏛️ 2. ATLAS INTERATIVO DE ANATOMIA 3D (11 SISTEMAS)
         </button>
         <button onclick="changeScreen('screen-radio')" style="padding:10px;">
-            <i class="fa-solid fa-walkie-talkie"></i> 📻 3. CENTRAL DE CÓDIGOS DE COMUNICAÇÃO & RÁDIO
+            📻 3. CENTRAL DE CÓDIGOS DE COMUNICAÇÃO & RÁDIO
         </button>
 
         <p style="margin-top: auto; text-align: center; font-size: 9px; opacity: 0.4;">Sistema de Instrução Tática de Emergência • 2026</p>
@@ -248,8 +251,7 @@ button:active { transform: scale(0.97); }
         </div>
 
         <!-- VIEWPORT DO BONECO 3D INTERATIVO -->
-        <div class="viewport-3d-container">
-            <div id="canvas-3d-sim"></div>
+        <div class="viewport-3d-container" id="canvas-3d-sim">
             <div class="viewport-controls">
                 <button class="btn-3d-ctrl" onclick="resetSimCamera()">🎥 RESET CÂMERA</button>
                 <button class="btn-3d-ctrl" onclick="toggleSimXray()">🩻 RAIO-X</button>
@@ -265,13 +267,13 @@ button:active { transform: scale(0.97); }
             <button onclick="askPatient()" style="padding:0 8px; margin:0;">PERGUNTAR</button>
         </div>
 
-        <!-- ABAS NAVEGÁVEIS -->
+        <!-- BARRA DE ABAS NAVEGÁVEIS -->
         <div class="action-tabs">
             <button class="tab-btn active" onclick="switchTab('exame')">🔎 EXAMES</button>
             <button class="tab-btn" onclick="switchTab('proced')">🛠️ PROCEDIMENTOS</button>
             <button class="tab-btn" onclick="switchTab('pcr')">🫀 RCP (30:2)</button>
             <button class="tab-btn" onclick="switchTab('imobil')">🧱 IMOBILIZAÇÃO</button>
-            <button class="tab-btn" onclick="switchTab('radio')">📻 RÁDIO & TRANSPORTE</button>
+            <button class="tab-btn" onclick="switchTab('radio')">📻 RÁDIO</button>
         </div>
 
         <!-- ABA EXAMES -->
@@ -328,12 +330,10 @@ button:active { transform: scale(0.97); }
     <!-- TELA 3: ATLAS INTERATIVO DE ANATOMIA 3D (11 SISTEMAS) -->
     <div id="screen-anatomy" class="screen">
         <h1>🏛️ ATLAS DE ANATOMIA 3D</h1>
-        <p>Explore os 11 Sistemas do Corpo Humano interativamente:</p>
+        <p>Explore a fisiologia e estrutura dos 11 Sistemas do Corpo Humano:</p>
 
         <!-- VIEWPORT 3D DO ATLAS -->
-        <div class="viewport-3d-container" style="height:220px;">
-            <div id="canvas-3d-atlas"></div>
-        </div>
+        <div class="viewport-3d-container" id="canvas-3d-atlas"></div>
 
         <div class="anatomy-sys-btn">
             <button class="btn-red" onclick="loadSystem3D('cardio')">🫀 CARDIOVASCULAR</button>
@@ -350,7 +350,8 @@ button:active { transform: scale(0.97); }
         </div>
 
         <div class="sys-info-box" id="sys-desc">
-            <b>Selecione um sistema acima</b> para visualizar seus órgãos no modelo 3D e entender sua fisiologia e aplicação no APH.
+            <div class="sys-title">💡 INSTRUÇÕES</div>
+            Selecione qualquer sistema acima para carregar o modelo no visualizador 3D e estudar suas estruturas, fisiologia e aplicação clínica.
         </div>
 
         <button class="btn-back" onclick="changeScreen('screen-menu')">↩ Voltar ao Menu</button>
@@ -420,9 +421,9 @@ function changeScreen(id) {
     document.getElementById(id).classList.add('active');
     
     if(id === 'screen-simulation') {
-        setTimeout(initSim3D, 100);
+        setTimeout(initSim3D, 150);
     } else if(id === 'screen-anatomy') {
-        setTimeout(initAtlas3D, 100);
+        setTimeout(initAtlas3D, 150);
     }
 }
 
@@ -446,41 +447,45 @@ function formatTime(s) {
 /* -------------------------------------------------------------------------- */
 function initSim3D() {
     const container = document.getElementById('canvas-3d-sim');
-    if(!container || container.children.length > 0) return;
+    if(!container) return;
+    container.innerHTML = ''; // Limpa elementos anteriores
 
     simScene = new THREE.Scene();
     simScene.background = new THREE.Color(0x040810);
 
-    simCamera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
-    simCamera.position.set(0, 1.2, 3.2);
+    const width = container.clientWidth || 300;
+    const height = container.clientHeight || 180;
+
+    simCamera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+    simCamera.position.set(0, 0.8, 3.0);
 
     simRenderer = new THREE.WebGLRenderer({ antialias: true });
-    simRenderer.setSize(container.clientWidth, container.clientHeight);
+    simRenderer.setSize(width, height);
     container.appendChild(simRenderer.domElement);
 
-    const light = new THREE.DirectionalLight(0xffffff, 1);
+    const light = new THREE.DirectionalLight(0xffffff, 1.2);
     light.position.set(2, 4, 3);
     simScene.add(light);
     simScene.add(new THREE.AmbientLight(0x404040, 1.5));
 
-    // Create Dummy Human Body (Stylized 3D)
+    // Boneco Humano 3D Estilizado
     const bodyGroup = new THREE.Group();
     
-    // Head
-    const headGeo = new THREE.SphereGeometry(0.2, 16, 16);
+    // Cabeça
+    const headGeo = new THREE.SphereGeometry(0.22, 16, 16);
     const headMat = new THREE.MeshPhongMaterial({ color: 0xffcc99 });
     const head = new THREE.Mesh(headGeo, headMat);
     head.position.y = 0.7;
     bodyGroup.add(head);
 
-    // Torso
+    // Tronco
     const torsoGeo = new THREE.CylinderGeometry(0.25, 0.2, 0.7, 16);
     const torsoMat = new THREE.MeshPhongMaterial({ color: 0x1f618d });
     const torso = new THREE.Mesh(torsoGeo, torsoMat);
     torso.position.y = 0.15;
     bodyGroup.add(torso);
 
-    // Limbs
+    // Pernas
     const legGeo = new THREE.CylinderGeometry(0.08, 0.06, 0.7, 16);
     const legMat = new THREE.MeshPhongMaterial({ color: 0x2c3e50 });
     const leg1 = new THREE.Mesh(legGeo, legMat); leg1.position.set(-0.12, -0.5, 0);
@@ -492,13 +497,13 @@ function initSim3D() {
 
     function animateSim() {
         requestAnimationFrame(animateSim);
-        if(simBody) simBody.rotation.y += 0.003;
+        if(simBody) simBody.rotation.y += 0.005;
         simRenderer.render(simScene, simCamera);
     }
     animateSim();
 }
 
-function resetSimCamera() { if(simCamera) simCamera.position.set(0, 1.2, 3.2); }
+function resetSimCamera() { if(simCamera) simCamera.position.set(0, 0.8, 3.0); }
 function toggleSimXray() {
     if(simBody) {
         simBody.traverse((child) => {
@@ -511,19 +516,23 @@ function toggleSimXray() {
 
 function initAtlas3D() {
     const container = document.getElementById('canvas-3d-atlas');
-    if(!container || container.children.length > 0) return;
+    if(!container) return;
+    container.innerHTML = '';
 
     atlasScene = new THREE.Scene();
     atlasScene.background = new THREE.Color(0x060c18);
 
-    atlasCamera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+    const width = container.clientWidth || 300;
+    const height = container.clientHeight || 180;
+
+    atlasCamera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
     atlasCamera.position.set(0, 0.5, 2.8);
 
     atlasRenderer = new THREE.WebGLRenderer({ antialias: true });
-    atlasRenderer.setSize(container.clientWidth, container.clientHeight);
+    atlasRenderer.setSize(width, height);
     container.appendChild(atlasRenderer.domElement);
 
-    const light = new THREE.DirectionalLight(0x00f0ff, 1.2);
+    const light = new THREE.DirectionalLight(0x00f0ff, 1.5);
     light.position.set(2, 3, 2);
     atlasScene.add(light);
     atlasScene.add(new THREE.AmbientLight(0xffffff, 0.8));
@@ -545,27 +554,71 @@ function initAtlas3D() {
 }
 
 /* -------------------------------------------------------------------------- */
-/* ATLAS DE ANATOMIA - LOAD SYSTEMS */
+/* ATLAS DE ANATOMIA DETALHADO - 11 SISTEMAS */
 /* -------------------------------------------------------------------------- */
 const sysData = {
-    cardio: { title: "🫀 SISTEMA CARDIOVASCULAR", desc: "Composto pelo Coração, Artérias e Veias. No APH, monitora-se a perfusão e ritmos de PCR (FV/TV/Assistolia).", color: 0xff1744 },
-    resp: { title: "🫁 SISTEMA RESPIRATÓRIO", desc: "Traqueia, Brônquios e Pulmões. Responsável pela troca gasosa (O2/CO2). Atenção total ao OVACE e Pneumotórax.", color: 0x00f0ff },
-    nervous: { title: "🧠 SISTEMA NERVOSTO", desc: "Encéfalo e Medula Espinhal. Avaliado pela Escala de Glasgow e reatividade pupilar à luz.", color: 0xb388ff },
-    skeletal: { title: "🦴 SISTEMA ESQUELÉTICO", desc: "206 Ossos. Protege órgãos vitais. Exige protocolo estrito de imobilização na prancha rígida.", color: 0xffd166 },
-    muscular: { title: "💪 SISTEMA MUSCULAR", desc: "Sustentação e movimento. Risco de Síndrome de Esmagamento (Crush) em traumas estruturais.", color: 0xff9100 },
-    digestive: { title: "🥪 SISTEMA DIGESTÓRIO", desc: "Órgãos abdominais. Atenção para rigidez ('abdômen em tábua') que indica sangramento interno grave.", color: 0x00e676 },
-    urinary: { title: "🚽 SISTEMA URINÁRIO", desc: "Rins e Bexiga. Perfusão renal é indicador chave de choque hemodinâmico estendido.", color: 0x29b6f6 },
-    endocrine: { title: "🧪 SISTEMA ENDÓCRINO", desc: "Glândulas e Hormônios. Crítico no manejo de crises hipoglicêmicas e descarga de Adrenalina.", color: 0xab47bc },
-    lymph: { title: "🩸 SISTEMA LINFÁTICO", desc: "Defesa imunitária. Atuação direta no choque anafilático severo por alergias.", color: 0xef5350 },
-    integumentary: { title: "🛡️ SISTEMA TEGUMENTAR", desc: "Pele. Avalia-se Cianose (azul), Palidez e Enchimento Capilar no diagnóstico imediato.", color: 0x8d6e63 },
-    repro: { title: "🧬 SISTEMA REPRODUTOR", desc: "Emergências obstétricas, parto iminente no APH e descompressão de veia cava em gestantes.", color: 0xec407a }
+    cardio: { 
+        title: "🫀 SISTEMA CARDIOVASCULAR", 
+        desc: "<span class='sys-subtitle'>Órgãos Principais:</span> Coração, Artérias, Veias, Capilares e Sangue.<br><span class='sys-subtitle'>Fisiologia Completa:</span> Funciona como a bomba hidráulica do corpo. O coração (dividido em 4 câmaras: 2 átrios e 2 ventrículos) bombeia o sangue oxigenado do pulmão para todo o corpo através das artérias, e recebe o sangue desoxigenado de volta pelas veias.<br><span class='sys-subtitle'>Aplicação no APH:</span> É o foco do controle de hemorragias (torniquete) e tratamento de paradas cardíacas (PCR) e choque hipovolêmico.", 
+        color: 0xff1744 
+    },
+    resp: { 
+        title: "🫁 SISTEMA RESPIRATÓRIO", 
+        desc: "<span class='sys-subtitle'>Órgãos Principais:</span> Nariz, Laringe, Traqueia, Brônquios, Bronquíolos e Pulmões (Alvéolos).<br><span class='sys-subtitle'>Fisiologia Completa:</span> Responsável pela captação de Oxigênio ($O_2$) do ar ambiente e eliminação do Dióxido de Carbono ($CO_2$) gerado pelo metabolismo celular através do processo de hematose nos alvéolos pulmonares.<br><span class='sys-subtitle'>Aplicação no APH:</span> Base da manutenção de Vias Aéreas (A da avaliação primária), tratamento de broncoaspiração, engasgos (OVACE) e pneumotórax.", 
+        color: 0x00f0ff 
+    },
+    nervous: { 
+        title: "🧠 SISTEMA NERVOSTO", 
+        desc: "<span class='sys-subtitle'>Órgãos Principais:</span> Encéfalo (Cérebro, Cerebelo, Tronco Encefálico), Medula Espinhal e Nervos Periféricos.<br><span class='sys-subtitle'>Fisiologia Completa:</span> O centro de comando eletroquímico do organismo. Processa estímulos sensoriais, coordena movimentos voluntários e involuntários e regula funções vitais inconscientes (como a frequência cardíaca).<br><span class='sys-subtitle'>Aplicação no APH:</span> Avaliado pela Escala de Glasgow (ECG-P), reação pupilar à luz e identificação de Traumatismo Cranioencefálico (TCE) ou AVC.", 
+        color: 0xb388ff 
+    },
+    skeletal: { 
+        title: "🦴 SISTEMA ESQUELÉTICO", 
+        desc: "<span class='sys-subtitle'>Órgãos Principais:</span> 206 Ossos, Cartilagens, Articulações e Ligamentos.<br><span class='sys-subtitle'>Fisiologia Completa:</span> Fornece sustentação mecânica, permite a locomoção, produz células sanguíneas no interior da medula óssea vermelha e protege órgãos vitais (caixa torácica protege coração e pulmões; crânio protege o encéfalo).<br><span class='sys-subtitle'>Aplicação no APH:</span> Foco da imobilização espinhal com colar cervical e prancha rígida em vítimas de trauma para evitar lesão medular.", 
+        color: 0xffd166 
+    },
+    muscular: { 
+        title: "💪 SISTEMA MUSCULAR", 
+        desc: "<span class='sys-subtitle'>Órgãos Principais:</span> Músculos Esqueléticos, Músculo Cardíaco (Miocárdio) e Músculos Lisos.<br><span class='sys-subtitle'>Fisiologia Completa:</span> Permite a movimentação do corpo através da contração e relaxamento de fibras musculares. Também é responsável por produzir calor corporal (tremores no frio) e manter a postura.<br><span class='sys-subtitle'>Aplicação no APH:</span> Avaliação de rhabdomyolysis e Síndrome de Esmagamento (Crush) em acidentes com presos em ferragens.", 
+        color: 0xff9100 
+    },
+    digestive: { 
+        title: "🥪 SISTEMA DIGESTÓRIO", 
+        desc: "<span class='sys-subtitle'>Órgãos Principais:</span> Boca, Esôfago, Estômago, Intestinos (Delgado/Grosso), Fígado e Pâncreas.<br><span class='sys-subtitle'>Fisiologia Completa:</span> Realiza a quebra física e química dos alimentos, absorvendo nutrientes essenciais na corrente sanguínea e eliminando os resíduos não digeridos.<br><span class='sys-subtitle'>Aplicação no APH:</span> Traumas abdominais contusos que causam rotura de órgãos maciços (Fígado/Baço) geram sangramento interno grave visível por rigidez ('abdômen em tábua').", 
+        color: 0x00e676 
+    },
+    urinary: { 
+        title: "🚽 SISTEMA URINÁRIO", 
+        desc: "<span class='sys-subtitle'>Órgãos Principais:</span> Rins, Ureteres, Bexiga Urinária e Uretra.<br><span class='sys-subtitle'>Fisiologia Completa:</span> Filtra o sangue para remover resíduos metabólicos metabólicos tóxicos (ureia, creatinina), além de regular o volume de água corporal, o equilíbrio eletrolítico e a pressão arterial de longo prazo.<br><span class='sys-subtitle'>Aplicação no APH:</span> A produção de urina e a perfusão renal são indicadores diretos de melhora ou piora do choque hemodinâmico.", 
+        color: 0x29b6f6 
+    },
+    endocrine: { 
+        title: "🧪 SISTEMA ENDÓCRINO", 
+        desc: "<span class='sys-subtitle'>Órgãos Principais:</span> Hipófise, Tireoide, Glândulas Suprarrenais, Pâncreas e Gônadas.<br><span class='sys-subtitle'>Fisiologia Completa:</span> Secretam hormônios diretamente na corrente sanguínea para mensurar e regular funções metabólicas lentas (como crescimento, níveis de açúcar e resposta ao estresse por liberação de adrenalina).<br><span class='sys-subtitle'>Aplicação no APH:</span> Avaliação e reversão rápida de crises de Hipoglicemia (açúcar baixo no sangue) e reações alérgicas severas.", 
+        color: 0xab47bc 
+    },
+    lymph: { 
+        title: "🩸 SISTEMA LINFÁTICO", 
+        desc: "<span class='sys-subtitle'>Órgãos Principais:</span> Linfonodos, Vasos Linfáticos, Baço, Timo e Tonsilas.<br><span class='sys-subtitle'>Fisiologia Completa:</span> Drena o excesso de fluido intersticial dos tecidos de volta para o sangue e atua como o exército de defesa contra infecções e patógenos (bactérias e vírus).<br><span class='sys-subtitle'>Aplicação no APH:</span> Compreensão de choques distributivos como a Sepse (infecção generalizada) e Choque Anafilático.", 
+        color: 0xef5350 
+    },
+    integumentary: { 
+        title: "🛡️ SISTEMA TEGUMENTAR", 
+        desc: "<span class='sys-subtitle'>Órgãos Principais:</span> Pele (Epiderme, Derme, Hipoderme), Cabelos, Unhas e Glândulas Sudoríparas.<br><span class='sys-subtitle'>Fisiologia Completa:</span> É a maior barreira de proteção do corpo contra infecções físicas, além de ser essencial na termorregulação (suor/vasoconstrição) e na percepção de dor, tato e temperatura.<br><span class='sys-subtitle'>Aplicação no APH:</span> Análise rápida de choque através da Cianose (pele azul/roxa), Palidez, Temperatura e Tempo de Enchimento Capilar ($>2$ segundos).", 
+        color: 0x8d6e63 
+    },
+    repro: { 
+        title: "🧬 SISTEMA REPRODUTOR", 
+        desc: "<span class='sys-subtitle'>Órgãos Principais:</span> Órgãos genitais masculinos e femininos (Útero, Ovários, Testículos).<br><span class='sys-subtitle'>Fisiologia Completa:</span> Responsável pela perpetuação da espécie através da produção de gametas e sustentação do desenvolvimento embrionário no útero feminino.<br><span class='sys-subtitle'>Aplicação no APH:</span> Atendimento a Partos Imineates no APH, Eclampsia, Hemorragias Obstétricas e cuidados na gestante traumatizada.", 
+        color: 0xec407a 
+    }
 };
 
 function loadSystem3D(sysKey) {
     const data = sysData[sysKey];
     if(!data) return;
 
-    document.getElementById("sys-desc").innerHTML = `<b>${data.title}</b><br>${data.desc}`;
+    document.getElementById("sys-desc").innerHTML = `<div class='sys-title'>${data.title}</div>${data.desc}`;
     if(atlasBodyMesh) {
         atlasBodyMesh.material.color.setHex(data.color);
     }
@@ -720,7 +773,7 @@ function doAction(act) {
 
 function doImobil(step) {
     if(step === 'colar' && pState.imobilStage === 0) {
-        pState.imobilStage = 1; updateFeedback("🦴 PASSO 1: Colar cervical ajustado e aplicado.");
+        pState.imobilStage = 1; updateFeedback("🦴 PASSO 1: Colar cervical ajustado e applied.");
     } else if(step === 'rolamento' && pState.imobilStage === 1) {
         pState.imobilStage = 2; updateFeedback("🪵 PASSO 2: Rolamento em bloco 90° e centralização na prancha.");
     } else if(step === 'tirantes' && pState.imobilStage === 2) {
@@ -765,7 +818,6 @@ function pressRcpVentilate() {
                 document.getElementById("btn-ambu").disabled = true;
                 updateRcpUI();
             } else {
-                // Concluiu os 5 ciclos
                 closeRcpModal();
                 if(pState.isPcr && pState.bleedRate === 0 && !pState.ovaceBlocked) {
                     pState.isPcr = false; pState.fc = 76; pState.paPas = 110; pState.paPad = 70; pState.spo2 = 92; pState.fr = 14;
