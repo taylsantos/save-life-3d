@@ -3,82 +3,60 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SOS HERO 3D - Realist Simulator</title>
-
-<!-- Library 3D Three.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<title>SOS HERO - Academia do Socorrista</title>
 
 <style>
 :root {
-    --bg-gradient: linear-gradient(135deg, #050b14, #0a1726, #102338);
-    --hud-cyan: #00f0ff;
-    --hud-green: #00e676;
-    --hud-red: #ff1744;
+    --bg-color: #0d1b2a;
+    --card-bg: #1b263b;
+    --accent-blue: #00b4d8;
+    --accent-green: #06d6a0;
+    --accent-red: #ef476f;
+    --text-color: #ffffff;
 }
 
 body {
-    margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: var(--bg-gradient); color: #ffffff;
-    text-align: center; min-height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden;
+    margin: 0; font-family: 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg-color); color: var(--text-color);
+    display: flex; justify-content: center; align-items: center; min-height: 100vh;
 }
 
 .app-container {
-    max-width: 450px; width: 92%; height: 95vh; margin: auto; padding: 15px;
-    background: rgba(10, 25, 40, 0.85); border-radius: 25px; box-shadow: 0 0 35px rgba(0, 240, 255, 0.2);
-    backdrop-filter: blur(20px); border: 1px solid rgba(0, 240, 255, 0.3);
-    display: flex; flex-direction: column; position: relative; box-sizing: border-box;
+    width: 92%; max-width: 480px; height: 95vh; background: var(--card-bg);
+    border-radius: 20px; padding: 20px; box-sizing: border-box;
+    display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    border: 1px solid rgba(0, 180, 216, 0.3); overflow: hidden;
 }
 
-.screen { display: none; flex-direction: column; height: 100%; overflow: hidden; }
+h1 { font-size: 20px; color: var(--accent-blue); margin: 0 0 5px 0; text-transform: uppercase; }
+p { font-size: 13px; opacity: 0.8; margin-bottom: 15px; }
+
+.screen { display: none; flex-direction: column; height: 100%; overflow-y: auto; }
 .active-screen { display: flex; }
 
-h1 { font-size: 20px; margin: 5px 0; text-transform: uppercase; letter-spacing: 2px; color: var(--hud-cyan); text-shadow: 0 0 10px rgba(0, 240, 255, 0.6); }
-p { font-size: 12px; opacity: 0.9; line-height: 1.4; margin: 4px 0; }
-
 button {
-    display: block; width: 100%; margin: 6px 0; padding: 12px; font-size: 13px; font-weight: bold; border: 1px solid rgba(0, 240, 255, 0.4); border-radius: 12px; cursor: pointer; transition: all 0.2s ease;
-    background: rgba(0, 240, 255, 0.1); color: white; text-transform: uppercase; letter-spacing: 1px;
+    background: var(--accent-blue); color: #000; border: none; padding: 12px;
+    border-radius: 12px; font-weight: bold; font-size: 14px; margin: 6px 0;
+    cursor: pointer; transition: transform 0.2s, background 0.2s;
 }
-button:active { transform: scale(0.97); background: rgba(0, 240, 255, 0.3); }
+button:active { transform: scale(0.97); }
+.btn-green { background: var(--accent-green); }
+.btn-red { background: var(--accent-red); color: white; }
+.btn-back { background: rgba(255,255,255,0.1); color: #fff; margin-top: auto; }
 
-.btn-menu-play { background: rgba(0, 230, 118, 0.2); border-color: var(--hud-green); color: var(--hud-green); }
-.btn-back { background: rgba(255,255,255,0.05); color: #aaa; margin-top: auto; padding: 10px; border-color: rgba(255,255,255,0.1); }
-
-/* --- 🖥️ PAINEL HOLOGRÁFICO (HUD 3D) --- */
-.hud-canvas-container {
-    position: relative; width: 100%; height: 250px; margin: 10px 0; border-radius: 18px; border: 1px solid rgba(0, 240, 255, 0.4);
-    overflow: hidden; background: #02070d; box-shadow: inset 0 0 25px rgba(0, 240, 255, 0.2);
+/* TABLES & CARDS */
+.info-card {
+    background: rgba(0, 0, 0, 0.2); border-left: 4px solid var(--accent-blue);
+    padding: 10px; margin: 6px 0; border-radius: 6px; text-align: left; font-size: 12px;
 }
+.info-card h3 { margin: 0 0 4px 0; color: var(--accent-blue); font-size: 14px; }
 
-#hud-3d-viewport { width: 100%; height: 100%; cursor: pointer; }
+.quiz-box { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 12px; margin-bottom: 10px; text-align: left; }
+.vitals-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0; }
+.vital-tag { background: rgba(255,255,255,0.08); padding: 8px; border-radius: 8px; font-size: 12px; }
+.vital-tag b { color: var(--accent-blue); display: block; font-size: 11px; }
 
-/* TELAS HOLOGRAMA SOBREPOSTAS */
-.hologram-overlay {
-    position: absolute; top: 12px; left: 12px; right: 12px; pointer-events: none;
-    display: flex; justify-content: space-between; align-items: flex-start;
-}
-
-.holo-card {
-    background: rgba(0, 240, 255, 0.08); border: 1px solid rgba(0, 240, 255, 0.4);
-    border-radius: 8px; padding: 6px 12px; backdrop-filter: blur(6px);
-    box-shadow: 0 0 12px rgba(0, 240, 255, 0.2); text-align: left;
-}
-
-.holo-title { font-size: 9px; text-transform: uppercase; color: var(--hud-cyan); opacity: 0.8; }
-.holo-value { font-size: 16px; font-weight: 900; color: #ffffff; text-shadow: 0 0 6px var(--hud-cyan); }
-
-/* VETOR DE DIREÇÃO DA MANOBRA (SETAS) */
-.hud-arrow-guide {
-    position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%);
-    pointer-events: none; font-size: 24px; color: var(--hud-cyan);
-    animation: pulseArrow 0.6s infinite alternate; text-shadow: 0 0 12px var(--hud-cyan);
-}
-@keyframes pulseArrow { from { transform: translate(-50%, 0); opacity: 0.4; } to { transform: translate(-50%, 8px); opacity: 1; } }
-
-.games-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; overflow-y: auto; flex-grow: 1; }
-.game-card { background: rgba(0,240,255,0.05); padding: 14px; border-radius: 14px; border: 1px solid rgba(0,240,255,0.2); cursor: pointer; transition: all 0.2s; }
-.game-card:active { transform: scale(0.96); background: rgba(0,240,255,0.15); }
-.game-card span { font-size: 26px; }
+.score-badge { font-size: 16px; font-weight: bold; color: var(--accent-green); margin-bottom: 10px; }
 </style>
 </head>
 <body>
@@ -87,239 +65,194 @@ button:active { transform: scale(0.97); background: rgba(0, 240, 255, 0.3); }
 
     <!-- MENU PRINCIPAL -->
     <div id="screen-menu" class="screen active-screen">
-        <div style="margin-top: 25px;">
-            <span style="font-size: 45px; color: var(--hud-cyan);">🩺</span>
-            <h1>SOS HERO 3D</h1>
-            <p>Simulador Tático de Atendimento Médico</p>
-        </div>
+        <span>🚑</span>
+        <h1>ACADEMIA DO SOCORRISTA</h1>
+        <p>Domine a aferição e os valores basais dos Sinais Vitais</p>
 
-        <div style="margin-top: 40px;">
-            <button class="btn-menu-play" onclick="start3DGame('rcp')">❤️ RCP 3D REALISTA</button>
-            <button onclick="changeScreen('screen-games-menu')">🕹️ CENTRAL DE TREINAMENTO 3D</button>
-        </div>
-        <p style="margin-top: auto; font-size: 10px; opacity: 0.4;">Realist 3D Medical Engine v12.0</p>
+        <button onclick="changeScreen('screen-casos')">🚨 PLANTÃO DE TRIAGEM (CASOS)</button>
+        <button class="btn-green" onclick="changeScreen('screen-basais')">📊 GUIA RÁPIDO DE VALORES BASAIS</button>
+
+        <p style="margin-top: auto; font-size: 10px; opacity: 0.4;">Estudo para APH / Socorrista v1.0</p>
     </div>
 
-    <!-- CENTRAL DE MINI-JOGOS -->
-    <div id="screen-games-menu" class="screen">
-        <h1>MÓDULOS TÁTICOS 3D</h1>
-        <p>Selecione uma simulação em tempo real:</p>
-        <div class="games-grid" style="margin-top: 15px;">
-            <div class="game-card" onclick="start3DGame('rcp')"><span>❤️</span><br><strong>RCP 3D</strong></div>
-            <div class="game-card" onclick="start3DGame('dea')"><span>⚡</span><br><strong>DEA 3D</strong></div>
-            <div class="game-card" onclick="start3DGame('heimlich')"><span>🥖</span><br><strong>Heimlich 3D</strong></div>
+    <!-- GUIA DE VALORES BASAIS -->
+    <div id="screen-basais" class="screen">
+        <h1>VALORES BASAIS (ADULTO)</h1>
+        <p>Valores normais de referência em repouso:</p>
+
+        <div class="info-card">
+            <h3>❤️ FREQUÊNCIA CARDÍACA (FC)</h3>
+            • <b>Normocardia:</b> 60 a 100 bpm<br>
+            • <b>Taquicardia:</b> > 100 bpm<br>
+            • <b>Bradicardia:</b> < 60 bpm
         </div>
-        <button class="btn-back" onclick="changeScreen('screen-menu')">↩ Voltar</button>
+
+        <div class="info-card">
+            <h3>🫁 FREQUÊNCIA RESPIRATÓRIA (FR)</h3>
+            • <b>Eupneia:</b> 12 a 20 mrpm<br>
+            • <b>Taquipneia:</b> > 20 mrpm<br>
+            • <b>Bradipneia:</b> < 12 mrpm
+        </div>
+
+        <div class="info-card">
+            <h3>🩸 PRESSÃO ARTERIAL (PA)</h3>
+            • <b>Ótima:</b> < 120 x 80 mmHg<br>
+            • <b>Normotensão:</b> ≤ 120-129 x 80-84 mmHg<br>
+            • <b>Hipertensão:</b> ≥ 140 x 90 mmHg<br>
+            • <b>Hipotensão:</b> PAS < 90 mmHg
+        </div>
+
+        <div class="info-card">
+            <h3>🌡️ TEMPERATURA (T)</h3>
+            • <b>Normotermia:</b> 36.0 °C a 37.2 °C<br>
+            • <b>Febrícula:</b> 37.3 °C a 37.7 °C<br>
+            • <b>Hipertermia (Febre):</b> ≥ 37.8 °C<br>
+            • <b>Hipotermia:</b> < 35.0 °C
+        </div>
+
+        <div class="info-card">
+            <h3>🩸 OXIMETRIA (SpO2) E GLICEMIA</h3>
+            • <b>SpO2 Normal:</b> 95% a 100% (Ar ambiente)<br>
+            • <b>Hipóxia Leve/Mod:</b> 90% a 94%<br>
+            • <b>Glicemia Jejum:</b> 70 a 99 mg/dL
+        </div>
+
+        <button class="btn-back" onclick="changeScreen('screen-menu')">↩ Voltar ao Menu</button>
     </div>
 
-    <!-- TELA SIMULADOR 3D HUD (UNIFICADO) -->
-    <div id="screen-sim-3d" class="screen">
-        <h1 id="sim-title">ESTAÇÃO HOLOGRÁFICA</h1>
-        <p id="sim-subtitle" style="font-size: 11px; color: var(--hud-cyan);">Toque no painel para agir</p>
+    <!-- MÓDULO CASOS CLÍNICOS -->
+    <div id="screen-casos" class="screen">
+        <h1>CASO CLÍNICO</h1>
+        <div class="score-badge" id="case-score">Pontuação: 0</div>
 
-        <!-- VIEWPORT 3D COM OVERLAY HOLOGRÁFICO -->
-        <div class="hud-canvas-container" onclick="handle3DAction()">
-            <div id="hud-3d-viewport"></div>
-
-            <!-- TELAS HOLOGRAMA SOBREPOSTAS (HUD) -->
-            <div class="hologram-overlay">
-                <div class="holo-card">
-                    <div class="holo-title" id="hud-label-left">FREQUÊNCIA</div>
-                    <div class="holo-value" id="hud-val-left">110 BPM</div>
-                </div>
-                <div class="holo-card">
-                    <div class="holo-title" id="hud-label-right">PROGRESSO</div>
-                    <div class="holo-value" id="hud-val-right">0 / 20</div>
-                </div>
+        <div class="quiz-box">
+            <b id="patient-name">Paciente: Adulto, 42 anos</b>
+            <p id="patient-desc" style="font-size: 11px; margin: 4px 0;">Relata tontura e suor frio após corrida.</p>
+            
+            <div class="vitals-grid">
+                <div class="vital-tag"><b>PA:</b> <span id="val-pa">120x80</span></div>
+                <div class="vital-tag"><b>FC:</b> <span id="val-fc">115 bpm</span></div>
+                <div class="vital-tag"><b>FR:</b> <span id="val-fr">16 mrpm</span></div>
+                <div class="vital-tag"><b>SpO2:</b> <span id="val-spo2">98%</span></div>
+                <div class="vital-tag"><b>TEMP:</b> <span id="val-temp">36.5 °C</span></div>
+                <div class="vital-tag"><b>GLICOSE:</b> <span id="val-gli">90 mg/dL</span></div>
             </div>
-
-            <!-- GUIA DE SETA HOLOGRÁFICA DE AÇÃO -->
-            <div class="hud-arrow-guide" id="hud-arrow">⬇️</div>
         </div>
 
-        <div id="hud-feedback" style="font-size:14px; font-weight:bold; height:20px; color:var(--hud-green);">AGUARDANDO AÇÃO...</div>
-        <button class="btn-back" onclick="stop3DSimulation()">↩ Encerrar Simulação</button>
+        <p style="font-weight: bold; margin: 5px 0;" id="case-question">Qual a alteração principal nos sinais vitais?</p>
+        <div id="case-options"></div>
+
+        <button class="btn-back" onclick="changeScreen('screen-menu')">↩ Voltar ao Menu</button>
     </div>
 
 </div>
 
 <script>
-let scene, camera, renderer, chestMesh, handsGroup, objectPill;
-let activeMode = 'rcp';
-let actionCount = 0; let lastActionTime = 0;
+let currentCaseIndex = 0;
+let points = 0;
+
+const casesDatabase = [
+    {
+        name: "Paciente: Homem, 35 anos",
+        desc: "Queixa de palpitação e ansiedade no trabalho.",
+        pa: "120x80 mmHg", fc: "125 bpm", fr: "16 mrpm", spo2: "98%", temp: "36.6 °C", gli: "88 mg/dL",
+        question: "Como você classifica a Frequência Cardíaca (FC) de 125 bpm?",
+        options: [
+            { text: "Taquicardia", correct: true },
+            { text: "Normocardia", correct: false },
+            { text: "Bradicardia", correct: false }
+        ]
+    },
+    {
+        name: "Paciente: Mulher, 68 anos",
+        desc: "Encontrada prostrada no frio da manhã.",
+        pa: "110x70 mmHg", fc: "52 bpm", fr: "10 mrpm", spo2: "95%", temp: "34.2 °C", gli: "92 mg/dL",
+        question: "A temperatura de 34.2 °C indica:",
+        options: [
+            { text: "Hipotermia", correct: true },
+            { text: "Febrícula", correct: false },
+            { text: "Normotermia", correct: false }
+        ]
+    },
+    {
+        name: "Paciente: Jovem, 20 anos",
+        desc: "Crise de ansiedade pós-trauma.",
+        pa: "130x85 mmHg", fc: "98 bpm", fr: "28 mrpm", spo2: "99%", temp: "36.8 °C", gli: "95 mg/dL",
+        question: "A Frequência Respiratória (FR) de 28 mrpm é chamada de:",
+        options: [
+            { text: "Taquipneia", correct: true },
+            { text: "Eupneia", correct: false },
+            { text: "Bradipneia", correct: false }
+        ]
+    },
+    {
+        name: "Paciente: Homem, 55 anos",
+        desc: "Forte dor de cabeça na região da nuca.",
+        pa: "170x105 mmHg", fc: "82 bpm", fr: "18 mrpm", spo2: "96%", temp: "36.5 °C", gli: "105 mg/dL",
+        question: "A Pressão Arterial (PA) de 170x105 mmHg configura:",
+        options: [
+            { text: "Hipertensão", correct: true },
+            { text: "Normotensão", correct: false },
+            { text: "Hipotensão", correct: false }
+        ]
+    },
+    {
+        name: "Paciente: Criança, 8 anos",
+        desc: "Lethargia e falta de ar moderada.",
+        pa: "100x65 mmHg", fc: "90 bpm", fr: "18 mrpm", spo2: "89%", temp: "36.7 °C", gli: "85 mg/dL",
+        question: "A Oximetria (SpO2) de 89% em ar ambiente indica:",
+        options: [
+            { text: "Hipóxia (Necessita O2)", correct: true },
+            { text: "Saturação Normal", correct: false },
+            { text: "Hiperoxia", correct: false }
+        ]
+    }
+];
 
 function changeScreen(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen'));
     document.getElementById(id).classList.add('active-screen');
+    if(id === 'screen-casos') loadCase();
 }
 
-// --- 🌐 MOTOR DE RENDERIZAÇÃO 3D REALISTA ---
-function init3DScene() {
-    const viewport = document.getElementById("hud-3d-viewport");
-    if(!viewport) return;
-
-    viewport.innerHTML = "";
-    const w = viewport.clientWidth; const h = viewport.clientHeight;
-
-    // 1. Câmera e Perspectiva
-    scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x02070d);
-
-    camera = new THREE.PerspectiveCamera(40, w / h, 0.1, 100);
-    camera.position.set(0, 3.8, 4.8);
-    camera.lookAt(0, -0.2, 0);
-
-    renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(w, h);
-    renderer.shadowMap.enabled = true;
-    viewport.appendChild(renderer.domElement);
-
-    // 2. Iluminação Neon Hospitalar Tática
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-    scene.add(ambientLight);
-
-    const cyanLight = new THREE.DirectionalLight(0x00f0ff, 0.9);
-    cyanLight.position.set(-3, 6, 3);
-    scene.add(cyanLight);
-
-    const greenLight = new THREE.DirectionalLight(0x00e676, 0.6);
-    greenLight.position.set(3, 5, -2);
-    scene.add(greenLight);
-
-    // 3. Maca Médica 3D
-    const bedGeo = new THREE.BoxGeometry(3.5, 0.3, 1.4);
-    const bedMat = new THREE.MeshPhongMaterial({ color: 0x0f1c29 });
-    const bed = new THREE.Mesh(bedGeo, bedMat);
-    bed.position.y = -0.5;
-    scene.add(bed);
-
-    // 4. Manequim de Atendimento 3D
-    // Cabeça
-    const headGeo = new THREE.SphereGeometry(0.3, 16, 16);
-    const skinMat = new THREE.MeshPhongMaterial({ color: 0xd1a374 });
-    const head = new THREE.Mesh(headGeo, skinMat);
-    head.position.set(-1.2, -0.1, 0);
-    scene.add(head);
-
-    // Tórax
-    const chestGeo = new THREE.BoxGeometry(1.0, 0.5, 0.8);
-    const shirtMat = new THREE.MeshPhongMaterial({ color: activeMode === 'dea' ? 0xcc1100 : 0x0077cc });
-    chestMesh = new THREE.Mesh(chestGeo, shirtMat);
-    chestMesh.position.set(-0.3, -0.1, 0);
-    scene.add(chestMesh);
-
-    // 5. Elementos Específicos por Modo
-    if(activeMode === 'rcp') {
-        // Mãos e Luvas Cirúrgicas Táticas
-        handsGroup = new THREE.Group();
-        const gloveGeo = new THREE.BoxGeometry(0.35, 0.2, 0.35);
-        const gloveMat = new THREE.MeshPhongMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.85 });
-        const glove = new THREE.Mesh(gloveGeo, gloveMat);
-        handsGroup.add(glove);
-        handsGroup.position.set(-0.3, 0.3, 0);
-        scene.add(handsGroup);
-    } else if(activeMode === 'heimlich') {
-        // Objeto de Obstrução (Pedaço ejetável)
-        const pillGeo = new THREE.SphereGeometry(0.08, 8, 8);
-        const pillMat = new THREE.MeshPhongMaterial({ color: 0xffaa00 });
-        objectPill = new THREE.Mesh(pillGeo, pillMat);
-        objectPill.position.set(-1.2, 0.1, 0);
-        scene.add(objectPill);
+function loadCase() {
+    if(currentCaseIndex >= casesDatabase.length) {
+        alert(`🏆 Parabéns, Socorrista! Você concluiu a rodada de triagem com ${points} pontos!`);
+        currentCaseIndex = 0; points = 0;
+        changeScreen('screen-menu');
+        return;
     }
 
-    // 6. Loop de Física e Renderização 3D
-    function renderLoop() {
-        if(document.getElementById("screen-sim-3d").classList.contains("active-screen")) {
-            requestAnimationFrame(renderLoop);
+    const c = casesDatabase[currentCaseIndex];
+    document.getElementById("case-score").innerHTML = `Pontuação: ${points}`;
+    document.getElementById("patient-name").innerHTML = c.name;
+    document.getElementById("patient-desc").innerHTML = c.desc;
+    document.getElementById("val-pa").innerHTML = c.pa;
+    document.getElementById("val-fc").innerHTML = c.fc;
+    document.getElementById("val-fr").innerHTML = c.fr;
+    document.getElementById("val-spo2").innerHTML = c.spo2;
+    document.getElementById("val-temp").innerHTML = c.temp;
+    document.getElementById("val-gli").innerHTML = c.gli;
+    document.getElementById("case-question").innerHTML = c.question;
 
-            // Retorno Elástico do Tórax
-            if(chestMesh && chestMesh.position.y < -0.1) chestMesh.position.y += 0.015;
-            if(handsGroup && handsGroup.position.y < 0.3) handsGroup.position.y += 0.015;
-
-            // Animação de Jejeção no Heimlich
-            if(activeMode === 'heimlich' && objectPill && objectPill.position.x > -2.5 && objectPill.position.x !== -1.2) {
-                objectPill.position.x -= 0.08;
-                objectPill.position.y += 0.02;
-            }
-
-            renderer.render(scene, camera);
-        }
-    }
-    renderLoop();
-}
-
-// --- CONTROLE DE MÓDULOS 3D ---
-function start3DGame(mode) {
-    activeMode = mode;
-    actionCount = 0; lastActionTime = 0;
-    
-    changeScreen("screen-sim-3d");
-
-    if(mode === 'rcp') {
-        document.getElementById("sim-title").innerHTML = "ESTAÇÃO RCP 3D";
-        document.getElementById("sim-subtitle").innerHTML = "Mantenha o ritmo de 110 BPM";
-        document.getElementById("hud-label-left").innerHTML = "RITMO";
-        document.getElementById("hud-val-left").innerHTML = "110 BPM";
-        document.getElementById("hud-label-right").innerHTML = "COMPRESSÕES";
-        document.getElementById("hud-val-right").innerHTML = "0 / 20";
-        document.getElementById("hud-arrow").style.display = "block";
-    } else if(mode === 'dea') {
-        document.getElementById("sim-title").innerHTML = "OPERAÇÃO DEA 3D";
-        document.getElementById("sim-subtitle").innerHTML = "Dispare o choque com segurança";
-        document.getElementById("hud-label-left").innerHTML = "CARGA";
-        document.getElementById("hud-val-left").innerHTML = "READY";
-        document.getElementById("hud-label-right").innerHTML = "IMPACTO";
-        document.getElementById("hud-val-right").innerHTML = "0 / 1";
-        document.getElementById("hud-arrow").style.display = "none";
-    } else if(mode === 'heimlich') {
-        document.getElementById("sim-title").innerHTML = "MANOBRA HEIMLICH 3D";
-        document.getElementById("sim-subtitle").innerHTML = "Pressione para ejetar a obstrução";
-        document.getElementById("hud-label-left").innerHTML = "PRESSÃO";
-        document.getElementById("hud-val-left").innerHTML = "ALTA";
-        document.getElementById("hud-label-right").innerHTML = "PRESSÕES";
-        document.getElementById("hud-val-right").innerHTML = "0 / 5";
-        document.getElementById("hud-arrow").style.display = "block";
-    }
-
-    setTimeout(init3DScene, 100);
-}
-
-function handle3DAction() {
-    const now = Date.now();
-
-    if(activeMode === 'rcp') {
-        if(chestMesh && handsGroup) {
-            chestMesh.position.y = -0.22;
-            handsGroup.position.y = 0.12;
-        }
-        if(lastActionTime !== 0) {
-            const bpm = 60 / ((now - lastActionTime) / 1000);
-            if(bpm >= 90 && bpm <= 130) {
-                document.getElementById("hud-feedback").innerHTML = "🟢 RITMO EXCELENTE";
-                actionCount++;
+    const optDiv = document.getElementById("case-options");
+    optDiv.innerHTML = "";
+    c.options.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.innerHTML = opt.text;
+        btn.onclick = () => {
+            if(opt.correct) {
+                alert("🟢 RESPOSTA CORRETA!");
+                points += 100;
             } else {
-                document.getElementById("hud-feedback").innerHTML = "⚠️ RITMO INCORRETO";
+                alert("🔴 INCORRETO! Revise a tabela de sinais vitais.");
             }
-        }
-        lastActionTime = now;
-        document.getElementById("hud-val-right").innerHTML = `${actionCount} / 20`;
-        if(actionCount >= 20) { alert("🎉 RCP Concluída com Sucesso!"); changeScreen("screen-games-menu"); }
-
-    } else if(activeMode === 'dea') {
-        if(chestMesh) chestMesh.position.y = 0.15; // Salto de choque no tronco
-        document.getElementById("hud-feedback").innerHTML = "⚡ CHOQUE APLICADO!";
-        setTimeout(() => { alert("⚡ Ritmo Cardíaco Restaurado!"); changeScreen("screen-games-menu"); }, 500);
-
-    } else if(activeMode === 'heimlich') {
-        if(chestMesh) chestMesh.position.y = -0.2;
-        actionCount++;
-        document.getElementById("hud-val-right").innerHTML = `${actionCount} / 5`;
-        if(objectPill) objectPill.position.x = -1.25; // Inicia vetor de ejeção
-        if(actionCount >= 5) { alert("🥖 Objeto Ejetado com Sucesso!"); changeScreen("screen-games-menu"); }
-    }
+            currentCaseIndex++;
+            loadCase();
+        };
+        optDiv.appendChild(btn);
+    });
 }
-
-function stop3DSimulation() { changeScreen("screen-games-menu"); }
 </script>
 
 </body>
